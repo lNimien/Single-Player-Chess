@@ -1,0 +1,3 @@
+// ChessWebsite — src/state
+// Game state management. No UI framework dependencies.
+// All exports defined in index.ts

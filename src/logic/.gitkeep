@@ -1,0 +1,3 @@
+// ChessWebsite — src/logic
+// Pure chess rules. No React, no UI dependencies.
+// All exports defined in index.ts

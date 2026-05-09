@@ -1,0 +1,22 @@
+/* ChessWebsite — Plain CSS — CSS custom properties defined here */
+:root {
+  /* Board colors */
+  --color-square-light: #f0d9b5;
+  --color-square-dark: #b58863;
+  --color-square-selected: #829769;
+  --color-square-valid-target: #646f40;
+  --color-square-last-move: #cdd26a;
+  --color-square-check: #e66e6e;
+
+  /* Piece colors */
+  --color-piece-white: #fff;
+  --color-piece-black: #000;
+  --color-piece-outline: #333;
+
+  /* Typography */
+  --font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Board sizing */
+  --board-size: min(100vw - 32px, 560px);
+  --square-size: calc(var(--board-size) / 8);
+}
