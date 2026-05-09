@@ -356,6 +356,26 @@ describe('getLegalMoves', () => {
     const castlingMovesNoRights = movesNoRights.filter((m) => m.castling !== null);
     expect(castlingMovesNoRights).toHaveLength(0);
   });
+
+  it('should exclude castling when the king is currently in check', () => {
+    const game = buildGameFromFEN('r3k2r/8/8/8/8/8/4r3/R3K2R w KQkq - 0 1');
+    const moves = getLegalMoves(game);
+    expect(moves.some((m) => m.castling !== null)).toBe(false);
+  });
+
+  it('should exclude castling through an attacked square', () => {
+    const game = buildGameFromFEN('r3k2r/8/8/8/8/5r2/8/R3K2R w KQkq - 0 1');
+    const moves = getLegalMoves(game);
+    expect(moves.some((m) => m.castling === 'kingside')).toBe(false);
+    expect(moves.some((m) => m.castling === 'queenside')).toBe(true);
+  });
+
+  it('should exclude castling into an attacked square', () => {
+    const game = buildGameFromFEN('r3k2r/8/8/8/8/6r1/8/R3K2R w KQkq - 0 1');
+    const moves = getLegalMoves(game);
+    expect(moves.some((m) => m.castling === 'kingside')).toBe(false);
+    expect(moves.some((m) => m.castling === 'queenside')).toBe(true);
+  });
 });
 
 describe('isGameOver', () => {

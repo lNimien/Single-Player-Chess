@@ -7,6 +7,7 @@ import { getAIMove } from '../logic/ai';
 
 export interface UseChessReturn {
   game: GameState;
+  displayedGame: GameState;
   selectedSquare: string | null;
   legalMoves: string[];
   currentTurn: 'white' | 'black';
@@ -29,6 +30,13 @@ export interface UseChessReturn {
   togglePlayerColor: () => void;
   toggleAnimations: () => void;
   toggleSounds: () => void;
+  reviewOffset: number;
+  isReviewingHistory: boolean;
+  canReviewBackward: boolean;
+  canReviewForward: boolean;
+  reviewBackward: () => void;
+  reviewForward: () => void;
+  exitReview: () => void;
 }
 
 function playMoveSound() {
@@ -100,6 +108,13 @@ export function useChess(): UseChessReturn {
   const [playerColor, setPlayerColor] = useState<'white' | 'black'>('white');
   const [animationsEnabled, setAnimationsEnabled] = useState(true);
   const [soundsEnabled, setSoundsEnabled] = useState(true);
+  const [reviewOffset, setReviewOffset] = useState(0);
+
+  const displayedGame = useMemo(() => {
+    if (reviewOffset === 0) return game;
+    const moveIndex = game.history.length - reviewOffset;
+    return game.history[moveIndex]?.beforeState ?? game;
+  }, [game, reviewOffset]);
 
   const legalMoves = useMemo(() => {
     if (!selectedSquare) return [];
@@ -121,10 +136,16 @@ export function useChess(): UseChessReturn {
 
     const aiMove = getAIMove(game, aiLevel);
     if (aiMove) {
-      setGame((prev) => makeMove(prev, aiMove));
+      setGame((prev) => {
+        const nextGame = makeMove(prev, aiMove);
+        if (soundsEnabled) {
+          playSoundForMove(nextGame, aiMove);
+        }
+        return nextGame;
+      });
     }
     setIsAIThinking(false);
-  }, [aiEnabled, aiLevel, game, gameOver, isAIThinking]);
+  }, [aiEnabled, aiLevel, game, gameOver, isAIThinking, soundsEnabled]);
 
   useEffect(() => {
     const aiSide = playerColor === 'white' ? 'black' : 'white';
@@ -155,6 +176,7 @@ export function useChess(): UseChessReturn {
 
   const selectSquare = useCallback(
     (algebraic: string) => {
+      if (reviewOffset > 0) return;
       setGame((prevGame) => {
         const squareIndex = toSquareIndex(algebraic as Algebraic);
         const square = prevGame.board[squareIndex];
@@ -199,7 +221,7 @@ export function useChess(): UseChessReturn {
         return prevGame;
       });
     },
-    [selectedSquare, soundsEnabled],
+    [reviewOffset, selectedSquare, soundsEnabled],
   );
 
   const selectPromotionPiece = useCallback(
@@ -219,6 +241,7 @@ export function useChess(): UseChessReturn {
         playSoundForMove(nextGame, matchingMove);
       }
       setGame(nextGame);
+      setReviewOffset(0);
       setPromotionPending(null);
       setSelectedSquare(null);
     },
@@ -234,6 +257,7 @@ export function useChess(): UseChessReturn {
     setGame((prevGame) => {
       setSelectedSquare(null);
       setPromotionPending(null);
+      setReviewOffset(0);
       return undoMove(prevGame);
     });
   }, []);
@@ -241,11 +265,27 @@ export function useChess(): UseChessReturn {
   const reset = useCallback(() => {
     setSelectedSquare(null);
     setPromotionPending(null);
+    setReviewOffset(0);
     setGame(createGame());
+  }, []);
+
+  const reviewBackward = useCallback(() => {
+    setSelectedSquare(null);
+    setPromotionPending(null);
+    setReviewOffset((prev) => Math.min(game.history.length, prev + 1));
+  }, [game.history.length]);
+
+  const reviewForward = useCallback(() => {
+    setReviewOffset((prev) => Math.max(0, prev - 1));
+  }, []);
+
+  const exitReview = useCallback(() => {
+    setReviewOffset(0);
   }, []);
 
   return {
     game,
+    displayedGame,
     selectedSquare,
     legalMoves,
     currentTurn,
@@ -268,5 +308,12 @@ export function useChess(): UseChessReturn {
     togglePlayerColor,
     toggleAnimations,
     toggleSounds,
+    reviewOffset,
+    isReviewingHistory: reviewOffset > 0,
+    canReviewBackward: reviewOffset < game.history.length,
+    canReviewForward: reviewOffset > 0,
+    reviewBackward,
+    reviewForward,
+    exitReview,
   };
 }

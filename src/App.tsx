@@ -14,6 +14,7 @@ function App() {
 
   const {
     game,
+    displayedGame,
     selectedSquare,
     legalMoves,
     currentTurn,
@@ -36,6 +37,13 @@ function App() {
     togglePlayerColor,
     toggleAnimations,
     toggleSounds,
+    reviewOffset,
+    isReviewingHistory,
+    canReviewBackward,
+    canReviewForward,
+    reviewBackward,
+    reviewForward,
+    exitReview,
   } = useChess();
 
   const lastMove = useMemo(() => {
@@ -44,12 +52,18 @@ function App() {
     return { from: last.from, to: last.to };
   }, [history]);
 
-  const inCheck = useMemo(() => isInCheck(game.board, game.sideToMove), [game.board, game.sideToMove]);
+  const lastCapture = useMemo(() => {
+    if (history.length === 0 || isReviewingHistory) return null;
+    const last = history[history.length - 1];
+    return last.captured ? last.to : null;
+  }, [history, isReviewingHistory]);
+
+  const inCheck = useMemo(() => isInCheck(displayedGame.board, displayedGame.sideToMove), [displayedGame.board, displayedGame.sideToMove]);
 
   const checkSquare = useMemo(() => {
     if (!inCheck) return null;
-    return fromSquareIndex(findKing(game.board, game.sideToMove));
-  }, [inCheck, game.board, game.sideToMove]);
+    return fromSquareIndex(findKing(displayedGame.board, displayedGame.sideToMove));
+  }, [inCheck, displayedGame.board, displayedGame.sideToMove]);
 
   return (
     <div className="app">
@@ -59,18 +73,19 @@ function App() {
       <main className="app__main">
         <div style={{ position: 'relative' }}>
           <Board
-            squares={game.board}
-            sideToMove={currentTurn}
-            selectedSquare={selectedSquare}
-            legalMoves={legalMoves}
+            squares={displayedGame.board}
+            sideToMove={displayedGame.sideToMove}
+            selectedSquare={isReviewingHistory ? null : selectedSquare}
+            legalMoves={isReviewingHistory ? [] : legalMoves}
             lastMove={lastMove}
+            lastCapture={lastCapture}
             checkSquare={checkSquare}
             onSquareClick={selectSquare}
             isFlipped={playerColor === 'black'}
           />
           <GameOverOverlay
-            result={game.result}
-            winner={game.result === 'checkmate' ? (game.sideToMove === 'white' ? 'black' : 'white') : null}
+            result={displayedGame.result}
+            winner={displayedGame.result === 'checkmate' ? (displayedGame.sideToMove === 'white' ? 'black' : 'white') : null}
             onNewGame={reset}
           />
         </div>
@@ -88,6 +103,13 @@ function App() {
           onSetAILevel={setAILevel}
           onOpenSettings={() => setSettingsOpen(true)}
           onExportPGN={() => downloadPGN(game)}
+          reviewOffset={reviewOffset}
+          isReviewingHistory={isReviewingHistory}
+          canReviewBackward={canReviewBackward}
+          canReviewForward={canReviewForward}
+          onReviewBackward={reviewBackward}
+          onReviewForward={reviewForward}
+          onExitReview={exitReview}
         />
       </main>
       <PromotionModal

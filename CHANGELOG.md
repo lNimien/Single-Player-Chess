@@ -33,7 +33,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Board flip support for playing as Black
 - Web Audio API move/capture/check sounds
 - PGN export and download support
-- 221 tests across 17 test files
+- Stronger capture feedback animation
+- Move history review controls (Back / Forward / Current) for reviewing previous positions
+- Correct castling legality: cannot castle while in check, through an attacked square, or into check
+- AI move sound feedback
+- 228 tests across 17 test files
 
 ### Stack
 

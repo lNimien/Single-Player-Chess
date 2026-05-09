@@ -10,6 +10,7 @@ describe('Board', () => {
     selectedSquare: null,
     legalMoves: [] as string[],
     lastMove: null as { from: string; to: string } | null,
+    lastCapture: null as string | null,
     checkSquare: null as string | null,
     onSquareClick: vi.fn(),
   };
@@ -50,6 +51,12 @@ describe('Board', () => {
     const to = screen.getByLabelText('Square e4');
     expect(from.classList.contains('square--last-move')).toBe(true);
     expect(to.classList.contains('square--last-move')).toBe(true);
+  });
+
+  it('should highlight the last capture square', () => {
+    render(<Board {...defaultProps} lastCapture="d5" />);
+    const capture = screen.getByLabelText('Square d5');
+    expect(capture.classList.contains('square--capture')).toBe(true);
   });
 
   it('should highlight check square', () => {

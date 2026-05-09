@@ -25,6 +25,8 @@
 - [x] Board flip (play as Black)
 - [x] Sound effects on move/capture/check via Web Audio API
 - [x] Export game to PGN
+- [x] Move history review controls (Back / Forward / Current)
+- [x] Correct castling legality: blocked while in check, through check, or into check
 
 ### Architecture
 - [x] `src/logic/` — Pure chess rules + AI engine (57 tests)
@@ -34,7 +36,7 @@
 - [x] `src/App.tsx` — Root wiring (1 integration test)
 
 ### Testing
-- [x] **221 tests across 17 test files — ALL PASSING**
+- [x] **228 tests across 17 test files — ALL PASSING**
 - [x] Coverage: 96.22% statements, 95.23% branches, 98.3% functions
 - [x] Playwright E2E smoke test configured
 

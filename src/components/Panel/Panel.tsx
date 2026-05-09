@@ -15,6 +15,13 @@ interface PanelProps {
   onSetAILevel: (level: number) => void;
   onOpenSettings: () => void;
   onExportPGN: () => void;
+  reviewOffset: number;
+  isReviewingHistory: boolean;
+  canReviewBackward: boolean;
+  canReviewForward: boolean;
+  onReviewBackward: () => void;
+  onReviewForward: () => void;
+  onExitReview: () => void;
 }
 
 function Panel({
@@ -31,6 +38,13 @@ function Panel({
   onSetAILevel,
   onOpenSettings,
   onExportPGN,
+  reviewOffset,
+  isReviewingHistory,
+  canReviewBackward,
+  canReviewForward,
+  onReviewBackward,
+  onReviewForward,
+  onExitReview,
 }: PanelProps) {
   const turnText = `${sideToMove === 'white' ? 'White' : 'Black'} to move`;
 
@@ -68,6 +82,20 @@ function Panel({
                 </div>
               );
             })}
+          </div>
+        )}
+      </div>
+
+      <div className="panel__section panel__review">
+        <h3 className="panel__title">Review</h3>
+        <div className="panel__review-controls" aria-label="Move review controls">
+          <button type="button" onClick={onReviewBackward} disabled={!canReviewBackward}>Back</button>
+          <button type="button" onClick={onReviewForward} disabled={!canReviewForward}>Forward</button>
+          <button type="button" onClick={onExitReview} disabled={!isReviewingHistory}>Current</button>
+        </div>
+        {isReviewingHistory && (
+          <div className="panel__review-status" aria-live="polite">
+            Viewing {reviewOffset} move{reviewOffset === 1 ? '' : 's'} ago
           </div>
         )}
       </div>

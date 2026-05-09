@@ -45,6 +45,13 @@ const defaultProps = {
   onSetAILevel: vi.fn(),
   onOpenSettings: vi.fn(),
   onExportPGN: vi.fn(),
+  reviewOffset: 0,
+  isReviewingHistory: false,
+  canReviewBackward: false,
+  canReviewForward: false,
+  onReviewBackward: vi.fn(),
+  onReviewForward: vi.fn(),
+  onExitReview: vi.fn(),
 };
 
 describe('Panel', () => {
@@ -191,5 +198,40 @@ describe('Panel', () => {
     render(<Panel {...defaultProps} onExportPGN={onExportPGN} />);
     await userEvent.click(screen.getByRole('button', { name: /export pgn/i }));
     expect(onExportPGN).toHaveBeenCalledTimes(1);
+  });
+
+  it('should render review controls', () => {
+    render(<Panel {...defaultProps} canReviewBackward={true} />);
+    expect(screen.getByRole('button', { name: /back/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /forward/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /current/i })).toBeTruthy();
+  });
+
+  it('should show review status when viewing previous moves', () => {
+    render(<Panel {...defaultProps} isReviewingHistory={true} reviewOffset={3} canReviewForward={true} />);
+    expect(screen.getByText(/viewing 3 moves ago/i)).toBeTruthy();
+  });
+
+  it('should call review callbacks', async () => {
+    const onReviewBackward = vi.fn();
+    const onReviewForward = vi.fn();
+    const onExitReview = vi.fn();
+    render(
+      <Panel
+        {...defaultProps}
+        isReviewingHistory={true}
+        canReviewBackward={true}
+        canReviewForward={true}
+        onReviewBackward={onReviewBackward}
+        onReviewForward={onReviewForward}
+        onExitReview={onExitReview}
+      />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: /back/i }));
+    await userEvent.click(screen.getByRole('button', { name: /forward/i }));
+    await userEvent.click(screen.getByRole('button', { name: /current/i }));
+    expect(onReviewBackward).toHaveBeenCalledTimes(1);
+    expect(onReviewForward).toHaveBeenCalledTimes(1);
+    expect(onExitReview).toHaveBeenCalledTimes(1);
   });
 });

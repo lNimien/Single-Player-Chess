@@ -10,6 +10,7 @@ export interface BoardProps {
   selectedSquare: string | null;
   legalMoves: string[];
   lastMove: { from: string; to: string } | null;
+  lastCapture: string | null;
   checkSquare: string | null;
   onSquareClick: (algebraic: string) => void;
   isFlipped?: boolean;
@@ -25,18 +26,20 @@ const Board = React.memo(function Board({
   selectedSquare,
   legalMoves,
   lastMove,
+  lastCapture,
   checkSquare,
   onSquareClick,
   isFlipped = false,
 }: BoardProps) {
-  const { selected, validTargets, lastMoveSquares, check } = useMemo(
+  const { selected, validTargets, lastMoveSquares, capture, check } = useMemo(
     () => ({
       selected: selectedSquare,
       validTargets: new Set(legalMoves),
       lastMoveSquares: lastMove ? new Set([lastMove.from, lastMove.to]) : new Set<string>(),
+      capture: lastCapture,
       check: checkSquare,
     }),
-    [selectedSquare, legalMoves, lastMove, checkSquare],
+    [selectedSquare, legalMoves, lastMove, lastCapture, checkSquare],
   );
 
   const displayRanks = isFlipped ? RANKS : RANKS_REVERSED;
@@ -66,6 +69,7 @@ const Board = React.memo(function Board({
                   isSelected={selected === algebraic}
                   isValidTarget={validTargets.has(algebraic)}
                   isLastMove={lastMoveSquares.has(algebraic)}
+                  isCapture={capture === algebraic}
                   isCheck={check === algebraic}
                   onClick={() => onSquareClick(algebraic)}
                 />

@@ -7,6 +7,7 @@ import {
   generatePseudoLegalMoves,
   filterLegalMoves,
   isInCheck,
+  isSquareAttacked,
   getGameResult,
   createPiece,
   FEN_SYMBOLS,
@@ -261,13 +262,30 @@ function filterMovesByCastlingRights(moves: Move[], rights: CastlingRights, colo
   });
 }
 
+function opponentOf(color: PieceColor): PieceColor {
+  return color === 'white' ? 'black' : 'white';
+}
+
+function isCastlingPathSafe(board: BoardSquare[], move: Move, color: PieceColor): boolean {
+  if (!move.castling) return true;
+  if (isInCheck(board, color)) return false;
+
+  const rank = color === 'white' ? '1' : '8';
+  const path = move.castling === 'kingside'
+    ? [`f${rank}`, `g${rank}`]
+    : [`d${rank}`, `c${rank}`];
+
+  return path.every((square) => !isSquareAttacked(board, opponentOf(color), toSquareIndex(square as `${string}${string}`)));
+}
+
 export function getLegalMoves(game: GameState): Move[] {
   const pseudoLegal = generatePseudoLegalMoves(game.board, game.sideToMove);
   const legal = filterLegalMoves(game.board, pseudoLegal, game.sideToMove);
   const withCastlingFiltered = filterMovesByCastlingRights(legal, game.castlingRights, game.sideToMove);
+  const withSafeCastling = withCastlingFiltered.filter((move) => isCastlingPathSafe(game.board, move, game.sideToMove));
   const enPassantMoves = generateEnPassantMoves(game.board, game.sideToMove, game.enPassantTarget);
   const enPassantLegal = filterLegalMoves(game.board, enPassantMoves, game.sideToMove);
-  return [...withCastlingFiltered, ...enPassantLegal];
+  return [...withSafeCastling, ...enPassantLegal];
 }
 
 export function isGameOver(game: GameState): boolean {
