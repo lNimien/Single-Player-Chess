@@ -1,0 +1,42 @@
+.square {
+  width: 100%;
+  height: 100%;
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
+  transition: background-color 150ms ease-out;
+}
+
+.square--light { background-color: var(--color-square-light); }
+.square--dark { background-color: var(--color-square-dark); }
+
+.square--selected { background-color: var(--color-square-selected) !important; }
+.square--valid-target { background-color: var(--color-square-valid-target) !important; }
+.square--last-move { background-color: var(--color-square-last-move) !important; }
+.square--check { background-color: var(--color-square-check) !important; }
+
+.square__indicator {
+  position: absolute;
+  width: 30%;
+  height: 30%;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+}
+
+.square:focus-visible {
+  outline: 2px solid var(--color-piece-outline);
+  outline-offset: -2px;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .square { transition: none; }
+}

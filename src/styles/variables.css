@@ -9,9 +9,10 @@
   --color-square-check: #e66e6e;
 
   /* Piece colors */
-  --color-piece-white: #fff;
-  --color-piece-black: #000;
-  --color-piece-outline: #333;
+  --color-piece-white: #f8f1e5;
+  --color-piece-black: #3d2817;
+  --color-piece-outline-light: #4a3728;
+  --color-piece-outline-dark: #1a1108;
 
   /* Typography */
   --font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;

@@ -1,0 +1,14 @@
+.piece {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.piece--white { color: var(--color-piece-white); }
+.piece--black { color: var(--color-piece-black); }
+.piece--selected { filter: brightness(1.1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .piece { transition: none; }
+}
