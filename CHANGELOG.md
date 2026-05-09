@@ -27,7 +27,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `@testing-library/jest-dom` for better DOM assertions
 - Pawn promotion modal with piece selector (queen, rook, bishop, knight)
 - Game over overlay for checkmate and stalemate with fade + scale animation
-- 162 tests across 14 test files
+- Pawn promotion modal with piece selector (queen, rook, bishop, knight)
+- Game over overlay for checkmate and stalemate with fade + scale animation
+- **AI opponent** — minimax + alpha-beta pruning with piece-square tables (PSTs), king safety evaluation, 5 difficulty levels (Beginner to Expert), plays as Black
+- Panel AI controls: toggle, difficulty selector, thinking indicator
+- 188 tests across 15 test files
 
 ### Stack
 
