@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Redesigned the chess UI with a premium chess-club visual system: walnut/parchment/gold tokens, stronger app hierarchy, board stage, richer panel cards, responsive mobile spacing, accessible focus states, and polished modals.
 - Improved publication-readiness on mobile with tighter 375px layout constraints, stacked side panel spacing, board viewport fitting, and horizontal-scroll prevention.
+- Updated the Vite React plugin to the Vite 8-compatible major version so clean deploy installs resolve without peer dependency conflicts.
 
 ### Added
 

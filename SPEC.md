@@ -158,6 +158,7 @@ Artifacts are stored in `engram` (preferred) or `openspec/` (for team sharing).
 | 2026-05-09 | Playwright for E2E testing alongside Vitest | Playwright provides real browser testing for critical user flows (game start, move, checkmate detection). Vitest covers unit/domain logic. |
 | 2026-05-10 | Premium chess-club redesign via semantic CSS tokens | Addresses prior feedback that minor tweaks were insufficient while preserving plain CSS, no dependencies, and framework-agnostic chess logic. |
 | 2026-05-10 | Publish-ready mobile layout and repository link | The portfolio app must work comfortably at 375px mobile width, avoid horizontal scroll, keep controls touch-friendly, and expose the source repository through an accessible static SVG link. |
+| 2026-05-10 | Keep Vite 8 and upgrade `@vitejs/plugin-react` to v6 | Fixes clean deployment installs by aligning the React plugin peer dependency range with Vite 8 instead of downgrading the app's Vite version. |
 
 ---
 
