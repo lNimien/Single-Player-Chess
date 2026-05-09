@@ -21,6 +21,11 @@ function App() {
     promotionPending,
     selectPromotionPiece,
     cancelPromotion,
+    aiEnabled,
+    aiLevel,
+    isAIThinking,
+    toggleAI,
+    setAILevel,
   } = useChess();
 
   const lastMove = useMemo(() => {
@@ -65,6 +70,11 @@ function App() {
           isInCheck={inCheck}
           onNewGame={reset}
           onUndo={undo}
+          aiEnabled={aiEnabled}
+          aiLevel={aiLevel}
+          isAIThinking={isAIThinking}
+          onToggleAI={toggleAI}
+          onSetAILevel={setAILevel}
         />
       </main>
       <PromotionModal

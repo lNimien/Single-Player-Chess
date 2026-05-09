@@ -1,6 +1,30 @@
-import { describe, expect, it } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { useChess } from './useChess';
+import type { Move } from '../logic/moves';
+import { createPiece } from '../logic/pieces';
+
+vi.mock('../logic/ai', () => ({
+  getAIMove: vi.fn(),
+}));
+
+import { getAIMove } from '../logic/ai';
+
+function createMockAIMove(): Move {
+  return {
+    from: 52,
+    fromAlgebraic: 'e7',
+    to: 36,
+    toAlgebraic: 'e5',
+    piece: createPiece('pawn', 'black'),
+    captured: null,
+    isEnPassant: false,
+    isPromotion: false,
+    promotionPiece: null,
+    castling: null,
+    enPassantTarget: null,
+  };
+}
 
 describe('useChess', () => {
   it('should have initial state with 32 pieces, white to move, no selection, no game over', () => {
@@ -283,5 +307,111 @@ describe('useChess', () => {
     expect(result.current.selectedSquare).toBeNull();
     expect(result.current.game.board.find((sq) => sq.algebraic === 'g7')?.piece?.type).toBe('pawn');
     expect(result.current.history).toHaveLength(8);
+  });
+
+  it('should have initial AI state disabled, level 3, not thinking', () => {
+    const { result } = renderHook(() => useChess());
+    expect(result.current.aiEnabled).toBe(false);
+    expect(result.current.aiLevel).toBe(3);
+    expect(result.current.isAIThinking).toBe(false);
+  });
+
+  it('should toggle AI enabled state', () => {
+    const { result } = renderHook(() => useChess());
+    expect(result.current.aiEnabled).toBe(false);
+
+    act(() => result.current.toggleAI());
+    expect(result.current.aiEnabled).toBe(true);
+
+    act(() => result.current.toggleAI());
+    expect(result.current.aiEnabled).toBe(false);
+  });
+
+  it('should set AI level', () => {
+    const { result } = renderHook(() => useChess());
+    expect(result.current.aiLevel).toBe(3);
+
+    act(() => result.current.setAILevel(5));
+    expect(result.current.aiLevel).toBe(5);
+  });
+
+  it('should trigger AI move when enabled and turn switches to black', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    (getAIMove as ReturnType<typeof vi.fn>).mockReturnValue(createMockAIMove());
+
+    const { result } = renderHook(() => useChess());
+
+    act(() => result.current.toggleAI());
+    expect(result.current.aiEnabled).toBe(true);
+
+    act(() => result.current.selectSquare('e2'));
+    act(() => result.current.selectSquare('e4'));
+
+    expect(result.current.currentTurn).toBe('black');
+    expect(result.current.isAIThinking).toBe(true);
+
+    await act(async () => {
+      vi.advanceTimersByTime(400);
+    });
+
+    await waitFor(() => expect(result.current.isAIThinking).toBe(false));
+    expect(result.current.currentTurn).toBe('white');
+    expect(result.current.history).toHaveLength(2);
+
+    vi.useRealTimers();
+  });
+
+  it('should not trigger AI move when AI is disabled', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    (getAIMove as ReturnType<typeof vi.fn>).mockReturnValue(createMockAIMove());
+
+    const { result } = renderHook(() => useChess());
+
+    act(() => result.current.selectSquare('e2'));
+    act(() => result.current.selectSquare('e4'));
+
+    expect(result.current.currentTurn).toBe('black');
+    expect(result.current.isAIThinking).toBe(false);
+
+    await act(async () => {
+      vi.advanceTimersByTime(400);
+    });
+
+    expect(result.current.currentTurn).toBe('black');
+    expect(result.current.history).toHaveLength(1);
+
+    vi.useRealTimers();
+  });
+
+  it('should not trigger AI move when game is over', async () => {
+    vi.useFakeTimers();
+    (getAIMove as ReturnType<typeof vi.fn>).mockReturnValue(createMockAIMove());
+
+    const { result } = renderHook(() => useChess());
+
+    const moves: [string, string][] = [
+      ['f2', 'f3'],
+      ['e7', 'e6'],
+      ['g2', 'g4'],
+      ['d8', 'h4'],
+    ];
+
+    for (const [from, to] of moves) {
+      act(() => result.current.selectSquare(from));
+      act(() => result.current.selectSquare(to));
+    }
+
+    expect(result.current.isGameOver).toBe(true);
+
+    act(() => result.current.toggleAI());
+
+    await act(async () => {
+      vi.advanceTimersByTime(400);
+    });
+
+    expect(result.current.isAIThinking).toBe(false);
+    expect(result.current.history).toHaveLength(4);
+
+    vi.useRealTimers();
   });
 });

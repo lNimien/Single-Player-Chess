@@ -1,8 +1,9 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import type { GameState, GameMove } from '../state/game';
 import { createGame, makeMove, undoMove, getLegalMoves, isGameOver } from '../state/game';
 import { toSquareIndex } from '../logic';
 import type { Algebraic, PieceType } from '../logic';
+import { getAIMove } from '../logic/ai';
 
 export interface UseChessReturn {
   game: GameState;
@@ -17,12 +18,20 @@ export interface UseChessReturn {
   promotionPending: { from: string; to: string } | null;
   selectPromotionPiece: (pieceType: PieceType) => void;
   cancelPromotion: () => void;
+  aiEnabled: boolean;
+  aiLevel: number;
+  isAIThinking: boolean;
+  toggleAI: () => void;
+  setAILevel: (level: number) => void;
 }
 
 export function useChess(): UseChessReturn {
   const [game, setGame] = useState<GameState>(() => createGame());
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
   const [promotionPending, setPromotionPending] = useState<{ from: string; to: string } | null>(null);
+  const [aiEnabled, setAiEnabled] = useState(false);
+  const [aiLevel, setAiLevel] = useState(3);
+  const [isAIThinking, setIsAIThinking] = useState(false);
 
   const legalMoves = useMemo(() => {
     if (!selectedSquare) return [];
@@ -34,6 +43,34 @@ export function useChess(): UseChessReturn {
 
   const currentTurn = game.sideToMove;
   const gameOver = isGameOver(game);
+
+  const playAIMove = useCallback(async () => {
+    if (!aiEnabled || isAIThinking || gameOver) return;
+    setIsAIThinking(true);
+
+    // Small delay to make AI feel natural
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    const aiMove = getAIMove(game, aiLevel);
+    if (aiMove) {
+      setGame((prev) => makeMove(prev, aiMove));
+    }
+    setIsAIThinking(false);
+  }, [aiEnabled, aiLevel, game, gameOver, isAIThinking]);
+
+  useEffect(() => {
+    if (aiEnabled && game.sideToMove === 'black' && !gameOver && !isAIThinking) {
+      playAIMove();
+    }
+  }, [game.sideToMove, aiEnabled, gameOver, isAIThinking, playAIMove]);
+
+  const toggleAI = useCallback(() => {
+    setAiEnabled((prev) => !prev);
+  }, []);
+
+  const setAILevel = useCallback((level: number) => {
+    setAiLevel(level);
+  }, []);
 
   const selectSquare = useCallback(
     (algebraic: string) => {
@@ -131,5 +168,10 @@ export function useChess(): UseChessReturn {
     promotionPending,
     selectPromotionPiece,
     cancelPromotion,
+    aiEnabled,
+    aiLevel,
+    isAIThinking,
+    toggleAI,
+    setAILevel,
   };
 }

@@ -8,9 +8,26 @@ interface PanelProps {
   isInCheck: boolean;
   onNewGame: () => void;
   onUndo: () => void;
+  aiEnabled: boolean;
+  aiLevel: number;
+  isAIThinking: boolean;
+  onToggleAI: () => void;
+  onSetAILevel: (level: number) => void;
 }
 
-function Panel({ sideToMove, history, result, isInCheck, onNewGame, onUndo }: PanelProps) {
+function Panel({
+  sideToMove,
+  history,
+  result,
+  isInCheck,
+  onNewGame,
+  onUndo,
+  aiEnabled,
+  aiLevel,
+  isAIThinking,
+  onToggleAI,
+  onSetAILevel,
+}: PanelProps) {
   const turnText = `${sideToMove === 'white' ? 'White' : 'Black'} to move`;
 
   return (
@@ -47,6 +64,41 @@ function Panel({ sideToMove, history, result, isInCheck, onNewGame, onUndo }: Pa
                 </div>
               );
             })}
+          </div>
+        )}
+      </div>
+
+      <div className="panel__section">
+        <h3 className="panel__title">AI Opponent</h3>
+        <label className="panel__ai-toggle">
+          <input
+            type="checkbox"
+            checked={aiEnabled}
+            onChange={onToggleAI}
+            aria-label="Enable AI opponent"
+          />
+          <span>Play vs AI</span>
+        </label>
+        {aiEnabled && (
+          <div className="panel__ai-level">
+            <label htmlFor="ai-level">Level:</label>
+            <select
+              id="ai-level"
+              value={aiLevel}
+              onChange={(e) => onSetAILevel(Number(e.target.value))}
+              aria-label="AI difficulty level"
+            >
+              <option value={1}>Beginner</option>
+              <option value={2}>Easy</option>
+              <option value={3}>Medium</option>
+              <option value={4}>Hard</option>
+              <option value={5}>Expert</option>
+            </select>
+          </div>
+        )}
+        {isAIThinking && (
+          <div className="panel__ai-thinking" aria-live="polite">
+            AI is thinking...
           </div>
         )}
       </div>

@@ -38,6 +38,11 @@ const defaultProps = {
   isInCheck: false,
   onNewGame: vi.fn(),
   onUndo: vi.fn(),
+  aiEnabled: false,
+  aiLevel: 3,
+  isAIThinking: false,
+  onToggleAI: vi.fn(),
+  onSetAILevel: vi.fn(),
 };
 
 describe('Panel', () => {
@@ -114,5 +119,55 @@ describe('Panel', () => {
   it('should show empty state when no moves', () => {
     render(<Panel {...defaultProps} history={[]} />);
     expect(screen.getByText(/no moves yet/i)).toBeTruthy();
+  });
+
+  it('should render AI toggle unchecked when aiEnabled is false', () => {
+    render(<Panel {...defaultProps} aiEnabled={false} />);
+    const checkbox = screen.getByRole('checkbox', { name: /enable ai opponent/i });
+    expect(checkbox).not.toBeChecked();
+  });
+
+  it('should render AI toggle checked when aiEnabled is true', () => {
+    render(<Panel {...defaultProps} aiEnabled={true} />);
+    const checkbox = screen.getByRole('checkbox', { name: /enable ai opponent/i });
+    expect(checkbox).toBeChecked();
+  });
+
+  it('should call onToggleAI when AI checkbox is clicked', async () => {
+    const onToggleAI = vi.fn();
+    render(<Panel {...defaultProps} onToggleAI={onToggleAI} />);
+    const checkbox = screen.getByRole('checkbox', { name: /enable ai opponent/i });
+    await userEvent.click(checkbox);
+    expect(onToggleAI).toHaveBeenCalledTimes(1);
+  });
+
+  it('should show AI level select when aiEnabled is true', () => {
+    render(<Panel {...defaultProps} aiEnabled={true} aiLevel={3} />);
+    expect(screen.getByLabelText(/ai difficulty level/i)).toBeTruthy();
+    expect(screen.getByText(/beginner/i)).toBeTruthy();
+    expect(screen.getByText(/expert/i)).toBeTruthy();
+  });
+
+  it('should not show AI level select when aiEnabled is false', () => {
+    render(<Panel {...defaultProps} aiEnabled={false} />);
+    expect(screen.queryByLabelText(/ai difficulty level/i)).toBeNull();
+  });
+
+  it('should call onSetAILevel when level is changed', async () => {
+    const onSetAILevel = vi.fn();
+    render(<Panel {...defaultProps} aiEnabled={true} onSetAILevel={onSetAILevel} />);
+    const select = screen.getByLabelText(/ai difficulty level/i);
+    await userEvent.selectOptions(select, '5');
+    expect(onSetAILevel).toHaveBeenCalledWith(5);
+  });
+
+  it('should show thinking indicator when isAIThinking is true', () => {
+    render(<Panel {...defaultProps} aiEnabled={true} isAIThinking={true} />);
+    expect(screen.getByText(/ai is thinking/i)).toBeTruthy();
+  });
+
+  it('should not show thinking indicator when isAIThinking is false', () => {
+    render(<Panel {...defaultProps} aiEnabled={true} isAIThinking={false} />);
+    expect(screen.queryByText(/ai is thinking/i)).toBeNull();
   });
 });
