@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Changed
+
+- Redesigned the chess UI with a premium chess-club visual system: walnut/parchment/gold tokens, stronger app hierarchy, board stage, richer panel cards, responsive mobile spacing, accessible focus states, and polished modals.
+- Improved publication-readiness on mobile with tighter 375px layout constraints, stacked side panel spacing, board viewport fitting, and horizontal-scroll prevention.
+
+### Added
+
+- Added a visible accessible GitHub repository link with an inline SVG icon in the app header.
+
 ## [0.1.0] — 2026-05-09
 
 ### Added

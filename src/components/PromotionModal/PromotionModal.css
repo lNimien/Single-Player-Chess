@@ -1,87 +1,104 @@
 .promotion-modal__overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
-  backdrop-filter: blur(4px);
+  padding: var(--space-4);
+  background: rgba(13, 7, 4, 0.66);
+  backdrop-filter: blur(8px);
 }
 
 .promotion-modal {
-  background-color: #f5f0e8;
-  border: 3px solid var(--color-piece-outline);
-  border-radius: 12px;
-  padding: 24px;
+  width: min(100%, 460px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  min-width: 280px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+  gap: var(--space-5);
+  padding: clamp(var(--space-5), 5vw, var(--space-8));
+  border: 1px solid rgba(243, 215, 133, 0.56);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(180deg, var(--color-surface), var(--color-surface-muted));
+  box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  animation: modalIn var(--motion-standard);
 }
 
 .promotion-modal__title {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--color-piece-outline);
   margin: 0;
+  color: var(--color-text);
+  font-family: var(--font-family-display);
+  font-size: clamp(26px, 8vw, 36px);
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
 }
 
 .promotion-modal__options {
-  display: flex;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(58px, 1fr));
+  gap: var(--space-3);
+  width: 100%;
 }
 
 .promotion-modal__option {
-  width: 64px;
-  height: 64px;
-  border: 2px solid var(--color-piece-outline);
-  border-radius: 8px;
-  background-color: var(--color-square-light);
+  min-width: 58px;
+  min-height: 64px;
+  aspect-ratio: 1;
+  border: 1px solid rgba(58, 34, 21, 0.54);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.32), transparent 42%),
+    var(--color-square-light);
   cursor: pointer;
-  padding: 8px;
-  transition: background-color 150ms ease-out, transform 100ms ease-out;
+  padding: var(--space-2);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--motion-fast), box-shadow var(--motion-fast), filter var(--motion-fast);
 }
 
 .promotion-modal__option:hover {
-  background-color: var(--color-square-selected);
-  transform: scale(1.05);
+  filter: brightness(1.04) saturate(1.08);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 12px 26px rgba(27, 15, 9, 0.24);
 }
 
 .promotion-modal__option:active {
-  transform: scale(0.95);
+  transform: translateY(1px) scale(0.98);
 }
 
-.promotion-modal__option:focus-visible {
-  outline: 2px solid var(--color-piece-outline);
-  outline-offset: 2px;
+.promotion-modal__option:focus-visible,
+.promotion-modal__cancel:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 3px;
 }
 
 .promotion-modal__cancel {
-  padding: 10px 24px;
-  border: 2px solid var(--color-piece-outline);
-  border-radius: 6px;
-  background-color: transparent;
-  color: var(--color-piece-outline);
-  font-family: var(--font-family);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 150ms ease-out;
   min-height: 44px;
+  border: 1px solid rgba(58, 34, 21, 0.54);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  padding: 10px 24px;
+  font-weight: 900;
+  transition: background-color var(--motion-fast), color var(--motion-fast), transform var(--motion-fast);
 }
 
 .promotion-modal__cancel:hover {
-  background-color: var(--color-piece-outline);
-  color: var(--color-piece-white);
+  background: var(--color-walnut-800);
+  color: var(--color-text-inverse);
+}
+
+@media (max-width: 420px) {
+  .promotion-modal__options {
+    grid-template-columns: repeat(2, minmax(88px, 1fr));
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .promotion-modal__option,
-  .promotion-modal__cancel {
+  .promotion-modal,
+  .promotion-modal * {
+    animation: none;
     transition: none;
   }
 }

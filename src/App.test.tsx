@@ -32,6 +32,16 @@ afterEach(() => {
 });
 
 describe('App promotion modal', () => {
+  it('should expose an accessible GitHub repository link in the application header', () => {
+    render(<App />);
+
+    const repositoryLink = screen.getByRole('link', { name: /view source on github/i });
+    expect(repositoryLink).toHaveAttribute('href', 'https://github.com/lNimien/Single-Player-Chess');
+    expect(repositoryLink).toHaveAttribute('target', '_blank');
+    expect(repositoryLink).toHaveAttribute('rel', 'noreferrer');
+    expect(repositoryLink.querySelector('svg')).toBeTruthy();
+  });
+
   it('should render promotion modal when a pawn reaches the last rank', async () => {
     const user = userEvent.setup();
     render(<App />);

@@ -1,24 +1,95 @@
-/* ChessWebsite — Plain CSS — CSS custom properties defined here */
+/* ChessWebsite — Plain CSS — semantic design tokens */
 :root {
+  /* Brand palette: premium chess-club / tournament table */
+  --color-walnut-950: #1b0f09;
+  --color-walnut-900: #27160d;
+  --color-walnut-800: #3a2215;
+  --color-walnut-700: #53341f;
+  --color-walnut-600: #70482b;
+  --color-parchment-50: #fff8e8;
+  --color-parchment-100: #f7edcf;
+  --color-parchment-200: #ead6a9;
+  --color-gold-300: #f3d785;
+  --color-gold-500: #c99632;
+  --color-gold-700: #8b601d;
+  --color-olive-500: #667545;
+  --color-olive-700: #394826;
+  --color-danger-500: #b73a2c;
+  --color-danger-700: #7c2119;
+
+  /* Semantic surfaces */
+  --color-app-bg: var(--color-walnut-950);
+  --color-surface: var(--color-parchment-50);
+  --color-surface-muted: var(--color-parchment-100);
+  --color-surface-strong: var(--color-parchment-200);
+  --color-text: #26170f;
+  --color-text-muted: #654b35;
+  --color-text-inverse: #fff7df;
+  --color-border: rgba(58, 34, 21, 0.55);
+  --color-ring: #f6d66f;
+
   /* Board colors */
-  --color-square-light: #f0d9b5;
-  --color-square-dark: #b58863;
-  --color-square-selected: #829769;
-  --color-square-valid-target: #646f40;
-  --color-square-last-move: #cdd26a;
-  --color-square-check: #e66e6e;
+  --color-square-light: #efd8a6;
+  --color-square-dark: #8d5a32;
+  --color-square-selected: #52693a;
+  --color-square-valid-target: #3f512b;
+  --color-square-last-move: #d7b54a;
+  --color-square-check: #b73a2c;
 
   /* Piece colors */
   --color-piece-white: #f8f1e5;
   --color-piece-black: #3d2817;
-  --color-piece-outline-light: #4a3728;
-  --color-piece-outline-dark: #1a1108;
+  --color-piece-outline-light: var(--color-walnut-800);
+  --color-piece-outline-dark: var(--color-walnut-950);
   --color-piece-outline: var(--color-piece-outline-light);
 
   /* Typography */
-  --font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-family-display: Georgia, "Times New Roman", serif;
+  --font-family-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  /* Layout */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 30px;
+  --shadow-sm: 0 6px 18px rgba(27, 15, 9, 0.18);
+  --shadow-md: 0 18px 48px rgba(27, 15, 9, 0.32);
+  --shadow-lg: 0 32px 90px rgba(13, 7, 4, 0.52);
+  --motion-fast: 160ms ease-out;
+  --motion-standard: 240ms cubic-bezier(0.2, 0.9, 0.2, 1);
 
   /* Board sizing */
-  --board-size: min(100vw - 32px, 560px);
+  --mobile-viewport-gutter: 16px;
+  --board-size: min(calc(100vw - var(--mobile-viewport-gutter)), 608px);
+  --board-label-size: clamp(0px, calc((100vw - 360px) * 0.45), 28px);
   --square-size: calc(var(--board-size) / 8);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--color-app-bg);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  font-family: var(--font-family);
+  color: var(--color-text);
+}
+
+button,
+select {
+  font: inherit;
+  touch-action: manipulation;
 }

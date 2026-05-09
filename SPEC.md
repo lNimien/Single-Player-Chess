@@ -18,10 +18,10 @@ A single-player chess game for the web that demonstrates senior-level engineerin
 
 ## 2. Design Language
 
-- **Aesthetic**: Classic wooden board feel, minimal chrome, functional elegance.
-- **Colors**: Warm cream/ivory squares, rich walnut dark squares, subtle shadows.
+- **Aesthetic**: Premium chess-club / tournament table with warm walnut, parchment panels, brass accents, and restrained depth. The UI should feel materially improved, not like minor color tweaks.
+- **Colors**: Warm cream/ivory squares, rich walnut dark squares, parchment surfaces, deep ink text, and accessible gold accents.
 - **Typography**: System fonts (no web fonts dependency), clean hierarchy.
-- **Motion**: Piece movement via CSS transitions (150ms ease-out). No animation library.
+- **Motion**: CSS-only transitions in the 150–300ms range using transform/opacity where possible, with `prefers-reduced-motion` respected. No animation library.
 - **No Tailwind**. Plain CSS with CSS custom properties.
 
 ---
@@ -156,6 +156,8 @@ Artifacts are stored in `engram` (preferred) or `openspec/` (for team sharing).
 | 2026-05-09 | Store en passant as flag on move, not as special move type | Simplifies move generation. En passant is the only move requiring history. |
 | 2026-05-09 | Plain CSS with CSS custom properties (no Tailwind) | Explicit portfolio constraint. CSS variables provide adequate flexibility. |
 | 2026-05-09 | Playwright for E2E testing alongside Vitest | Playwright provides real browser testing for critical user flows (game start, move, checkmate detection). Vitest covers unit/domain logic. |
+| 2026-05-10 | Premium chess-club redesign via semantic CSS tokens | Addresses prior feedback that minor tweaks were insufficient while preserving plain CSS, no dependencies, and framework-agnostic chess logic. |
+| 2026-05-10 | Publish-ready mobile layout and repository link | The portfolio app must work comfortably at 375px mobile width, avoid horizontal scroll, keep controls touch-friendly, and expose the source repository through an accessible static SVG link. |
 
 ---
 
@@ -191,3 +193,21 @@ Artifacts are stored in `engram` (preferred) or `openspec/` (for team sharing).
 
 - Board coordinates use algebraic notation mapped through `toSquareIndex`/`fromSquareIndex` from `src/logic/board.ts`; move generation must not duplicate board coordinate types.
 - Move objects carry explicit booleans (`isEnPassant`, `isPromotion`) and nullable metadata (`promotionPiece`, `castling`, `enPassantTarget`) so later validation/state modules can interpret moves without re-deriving special-case intent.
+
+---
+
+## 12. Delta Spec — Publication Mobile Polish
+
+### Requirements
+
+- The application shell must avoid horizontal scrolling on 375px-wide phones and compact mobile heights.
+- The chess board must scale inside the available viewport with a comfortable margin and without forcing each square to a desktop-sized minimum.
+- The side panel must stack below the board on mobile, reduce cramped internal spacing, and keep buttons/selects at a minimum 44px touch target.
+- The premium chess-club aesthetic remains: walnut background, parchment panels, brass/gold accents, and restrained depth.
+- A visible but non-intrusive GitHub repository link must appear in the top application chrome.
+- The GitHub link must use an inline SVG icon, no external icon dependency, `aria-label`, `target="_blank"`, `rel="noreferrer"`, and a visible focus state.
+
+### Design Notes
+
+- Mobile responsiveness is implemented in plain CSS through semantic layout tokens and breakpoint-specific adjustments; no Tailwind or new dependencies.
+- The repository link is static markup in the React UI, with no additional state or effects.

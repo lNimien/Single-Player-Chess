@@ -27,6 +27,8 @@
 - [x] Export game to PGN
 - [x] Move history review controls (Back / Forward / Current)
 - [x] Correct castling legality: blocked while in check, through check, or into check
+- [x] Publish-ready mobile layout at 375px with no horizontal scroll
+- [x] Visible accessible GitHub repository link in the app chrome
 
 ### Architecture
 - [x] `src/logic/` — Pure chess rules + AI engine (57 tests)
@@ -45,4 +47,4 @@
 - [ ] Move validation error feedback
 - [ ] Time control
 - [ ] Import game from FEN
-- [ ] Responsive improvements for very small screens
+- [x] Responsive improvements for very small screens
