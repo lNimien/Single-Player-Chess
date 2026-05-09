@@ -2,29 +2,14 @@
 
 ## In Progress
 
-### Foundation Setup
-- [ ] Initialize Vite + React + TypeScript project
-- [ ] Configure Vitest with jsdom environment
-- [ ] Define project structure (`logic/`, `state/`, `components/`, `hooks/`, `styles/`)
-- [ ] Create base CSS variables and global styles
-
-### Chess Logic (Domain Layer — TDD)
-- [x] `src/logic/pieces.ts` — Piece types, colors, values
-- [x] `src/logic/board.ts` — Board representation, square mapping, FEN position parsing
-- [x] `src/logic/moves.ts` — Move generation (pseudo-legal) for all piece types
-- [x] `src/logic/validation.ts` — Legal move detection, check/checkmate/stalemate
-- [x] `src/logic/index.ts` — Public API exports
-
-### Game State
-- [ ] `src/state/game.ts` — Game state: board, turn, history, result detection
-- [ ] `src/state/index.ts` — Public API exports
-
 ### UI Components
-- [ ] `Board/` — 8x8 grid component with coordinate labels
-- [ ] `Square/` — Individual square with state handling
-- [ ] `Piece/` — SVG piece rendering with drag-and-drop
-- [ ] `Panel/` — Move history, turn indicator, game status, action buttons
-- [ ] `App.tsx` — Root component wiring everything together
+- [ ] `src/hooks/useChess.ts` — React hook orchestrating game state
+- [ ] `src/components/Piece/` — SVG piece rendering
+- [ ] `src/components/Square/` — Individual square with state handling
+- [ ] `src/components/Board/` — 8x8 grid component with coordinate labels
+- [ ] `src/components/Panel/` — Move history, turn indicator, game status, action buttons
+- [ ] `src/App.tsx` — Root component wiring everything together
+- [ ] `src/styles/board.css` — Board and piece styles
 
 ### Interactions
 - [ ] Click-to-select piece on own turn
@@ -32,15 +17,38 @@
 - [ ] Visual highlight: selected piece, valid moves, last move, check indicator
 - [ ] Pawn promotion piece selector modal
 
-### Testing (TDD)
-- [ ] 90%+ coverage on `src/logic/` modules
-- [ ] Integration tests for full move sequences
-- [ ] UI component behavior tests
+### Testing
+- [ ] 90%+ coverage on `src/logic/` modules ✅ (96.22% statements)
+- [ ] UI component behavior tests with Testing Library
+- [ ] E2E smoke tests with Playwright
+
+## Done ✅
+
+### Game State
+- ✅ `src/state/game.ts` implemented with immutable updates, castling rights, en passant, halfmove clock, fullmove number, move history with SAN notation, undo, and result detection
+- ✅ `src/state/game.test.ts` — 53 tests, all passing
+
+### Chess Logic
+- ✅ `src/logic/pieces.ts` — piece types, colors, material values, FEN symbols
+- ✅ `src/logic/board.ts` — square indexing, initial setup, FEN parsing/serialization
+- ✅ `src/logic/moves.ts` — pseudo-legal move generation for all pieces + special moves
+- ✅ `src/logic/validation.ts` — attacked squares, legal moves, check/checkmate/stalemate
+- ✅ `src/logic/index.ts` — public API barrel export
+- ✅ 45 logic tests, all passing
+
+### Foundation
+- ✅ Project initialized with Vite + React + TypeScript
+- ✅ AGENTS.md, SPEC.md, TODO.md, CHANGELOG.md created
+- ✅ vitest.config.ts with jsdom + playwright.config.ts with Chromium
+- ✅ .gitignore configured
+- ✅ package.json scripts: test, test:watch, test:coverage, test:e2e, test:e2e:ui
+- ✅ CSS variables in src/styles/variables.css
+- ✅ src/ directory structure: logic/, state/, components/, hooks/, styles/
 
 ## Backlog
 
 ### Post-MVP Features
-- [ ] Undo last move
+- [ ] Undo last move (hook-level, UI button)
 - [ ] Reset game to starting position
 - [ ] AI opponent (minimax + alpha-beta pruning)
 - [ ] Piece capture animation
@@ -50,31 +58,3 @@
 - [ ] Move validation error feedback
 - [ ] Board flip (play as Black)
 - [ ] Time control
-
-## Done ✅
-
-### Chess Logic
-- ✅ `src/logic/pieces.ts` implemented with piece types, colors, material values, FEN symbols, and symbol parsing
-- ✅ `src/logic/board.ts` implemented with square indexing, initial board setup, and FEN parsing/serialization tests
-- ✅ `src/logic/moves.ts` implemented with pseudo-legal move generation for pawns, sliding pieces, knights, kings, castling, promotion, and en passant targets
-- ✅ `src/logic/validation.ts` implemented with attacked-square detection, legal move filtering, check, checkmate, stalemate, and game result detection
-- ✅ `src/logic/index.ts` added as public API barrel export
-
-### Foundation
-- ✅ Project initialized with Vite + React + TypeScript
-- ✅ AGENTS.md created with agent workflow guide
-- ✅ SPEC.md created with full project specification
-- ✅ vitest.config.ts configured with jsdom test environment
-- ✅ TODO.md and CHANGELOG.md created
-- ✅ .gitignore configured
-- ✅ package.json scripts configured (test, test:watch, test:coverage)
-- ✅ Initial git commit: "chore: initial project foundation"
-
-## Next: Chess Logic (TDD)
-
-Start TDD on `src/logic/` modules following RED → GREEN → REFACTOR:
-1. `src/logic/pieces.ts` — Piece types, colors, values
-2. `src/logic/board.ts` — Board representation, square mapping
-3. `src/logic/moves.ts` — Move generation (pseudo-legal)
-4. `src/logic/validation.ts` — Legal move detection, check/checkmate/stalemate
-5. `src/logic/index.ts` — Public API exports
