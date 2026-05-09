@@ -6,7 +6,7 @@
 - [ ] `src/hooks/useChess.ts` — React hook orchestrating game state
 - [ ] `src/components/Piece/` — SVG piece rendering
 - [ ] `src/components/Square/` — Individual square with state handling
-- [ ] `src/components/Board/` — 8x8 grid component with coordinate labels
+- [x] `src/components/Board/` — 8x8 grid component with coordinate labels
 - [ ] `src/components/Panel/` — Move history, turn indicator, game status, action buttons
 - [ ] `src/App.tsx` — Root component wiring everything together
 - [ ] `src/styles/board.css` — Board and piece styles
@@ -35,6 +35,11 @@
 - ✅ `src/logic/validation.ts` — attacked squares, legal moves, check/checkmate/stalemate
 - ✅ `src/logic/index.ts` — public API barrel export
 - ✅ 45 logic tests, all passing
+
+### UI Components
+- ✅ `src/components/Board/Board.tsx` — 8x8 grid with coordinate labels, responsive CSS grid, useMemo for square states
+- ✅ `src/components/Board/Board.test.tsx` — 7 behavior tests, all passing
+- ✅ `src/components/Board/Board.css` — classic wooden board aesthetic with shadow and border
 
 ### Foundation
 - ✅ Project initialized with Vite + React + TypeScript
