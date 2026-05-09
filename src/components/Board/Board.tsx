@@ -12,6 +12,7 @@ export interface BoardProps {
   lastMove: { from: string; to: string } | null;
   checkSquare: string | null;
   onSquareClick: (algebraic: string) => void;
+  isFlipped?: boolean;
 }
 
 const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -26,6 +27,7 @@ const Board = React.memo(function Board({
   lastMove,
   checkSquare,
   onSquareClick,
+  isFlipped = false,
 }: BoardProps) {
   const { selected, validTargets, lastMoveSquares, check } = useMemo(
     () => ({
@@ -37,9 +39,12 @@ const Board = React.memo(function Board({
     [selectedSquare, legalMoves, lastMove, checkSquare],
   );
 
+  const displayRanks = isFlipped ? RANKS : RANKS_REVERSED;
+  const displayFiles = isFlipped ? [...FILES].reverse() : FILES;
+
   return (
     <div className="board" role="grid" aria-label="Chess board">
-      {RANKS_REVERSED.map((rank, rankIndex) => (
+      {displayRanks.map((rank, rankIndex) => (
         <React.Fragment key={`rank-row-${rank}`}>
           <div
             className="board__label board__label--rank"
@@ -47,7 +52,7 @@ const Board = React.memo(function Board({
           >
             {rank}
           </div>
-          {FILES.map((file, fileIndex) => {
+          {displayFiles.map((file, fileIndex) => {
             const algebraic = `${file}${rank}` as Algebraic;
             const square = squares[toSquareIndex(algebraic)];
             return (
@@ -69,7 +74,7 @@ const Board = React.memo(function Board({
           })}
         </React.Fragment>
       ))}
-      {FILES.map((file, fileIndex) => (
+      {displayFiles.map((file, fileIndex) => (
         <div
           key={`file-${file}`}
           className="board__label board__label--file"

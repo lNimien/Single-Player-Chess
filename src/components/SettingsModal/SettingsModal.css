@@ -1,0 +1,142 @@
+.settings-modal__overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(4px);
+}
+
+.settings-modal {
+  background-color: #f5f0e8;
+  border: 3px solid var(--color-piece-outline);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 280px;
+  max-width: 360px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+
+.settings-modal__title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-piece-outline);
+  margin: 0;
+  text-align: center;
+}
+
+.settings-modal__section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.settings-modal__label {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-piece-outline);
+}
+
+.settings-modal__toggle-group {
+  display: flex;
+  gap: 4px;
+}
+
+.settings-modal__option {
+  padding: 8px 16px;
+  border: 2px solid var(--color-piece-outline);
+  border-radius: 6px;
+  background-color: var(--color-square-light);
+  color: var(--color-piece-outline);
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 150ms ease-out, transform 100ms ease-out;
+  min-height: 36px;
+}
+
+.settings-modal__option:hover:not(.settings-modal__option--active) {
+  background-color: var(--color-square-dark);
+  color: var(--color-piece-white);
+}
+
+.settings-modal__option--active {
+  background-color: var(--color-piece-outline);
+  color: var(--color-piece-white);
+  cursor: default;
+}
+
+.settings-modal__toggle {
+  padding: 8px 20px;
+  border: 2px solid var(--color-piece-outline);
+  border-radius: 6px;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 150ms ease-out, transform 100ms ease-out;
+  min-height: 36px;
+  min-width: 60px;
+}
+
+.settings-modal__toggle--on {
+  background-color: var(--color-piece-outline);
+  color: var(--color-piece-white);
+}
+
+.settings-modal__toggle--off {
+  background-color: var(--color-square-light);
+  color: var(--color-piece-outline);
+}
+
+.settings-modal__toggle:hover {
+  transform: scale(1.02);
+}
+
+.settings-modal__toggle:active {
+  transform: scale(0.98);
+}
+
+.settings-modal__close {
+  padding: 10px 24px;
+  border: 2px solid var(--color-piece-outline);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--color-piece-outline);
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 150ms ease-out;
+  min-height: 44px;
+  margin-top: 4px;
+}
+
+.settings-modal__close:hover {
+  background-color: var(--color-piece-outline);
+  color: var(--color-piece-white);
+}
+
+.settings-modal__close:focus-visible,
+.settings-modal__option:focus-visible,
+.settings-modal__toggle:focus-visible {
+  outline: 2px solid var(--color-piece-outline);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-modal__option,
+  .settings-modal__toggle,
+  .settings-modal__close {
+    transition: none;
+  }
+}

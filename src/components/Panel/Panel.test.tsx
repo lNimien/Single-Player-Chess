@@ -43,6 +43,8 @@ const defaultProps = {
   isAIThinking: false,
   onToggleAI: vi.fn(),
   onSetAILevel: vi.fn(),
+  onOpenSettings: vi.fn(),
+  onExportPGN: vi.fn(),
 };
 
 describe('Panel', () => {
@@ -100,6 +102,7 @@ describe('Panel', () => {
     render(<Panel {...defaultProps} />);
     expect(screen.getByRole('button', { name: /new game/i })).toBeTruthy();
     expect(screen.getByRole('button', { name: /undo/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /export pgn/i })).toBeTruthy();
   });
 
   it('should call onNewGame when New Game clicked', async () => {
@@ -169,5 +172,24 @@ describe('Panel', () => {
   it('should not show thinking indicator when isAIThinking is false', () => {
     render(<Panel {...defaultProps} aiEnabled={true} isAIThinking={false} />);
     expect(screen.queryByText(/ai is thinking/i)).toBeNull();
+  });
+
+  it('should render Settings button', () => {
+    render(<Panel {...defaultProps} />);
+    expect(screen.getByRole('button', { name: /settings/i })).toBeTruthy();
+  });
+
+  it('should call onOpenSettings when Settings button is clicked', async () => {
+    const onOpenSettings = vi.fn();
+    render(<Panel {...defaultProps} onOpenSettings={onOpenSettings} />);
+    await userEvent.click(screen.getByRole('button', { name: /settings/i }));
+    expect(onOpenSettings).toHaveBeenCalledTimes(1);
+  });
+
+  it('should call onExportPGN when Export PGN button is clicked', async () => {
+    const onExportPGN = vi.fn();
+    render(<Panel {...defaultProps} onExportPGN={onExportPGN} />);
+    await userEvent.click(screen.getByRole('button', { name: /export pgn/i }));
+    expect(onExportPGN).toHaveBeenCalledTimes(1);
   });
 });

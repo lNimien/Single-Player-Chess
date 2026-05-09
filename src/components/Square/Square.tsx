@@ -9,6 +9,7 @@ export interface SquareProps {
   isValidTarget?: boolean;
   isLastMove?: boolean;
   isCheck?: boolean;
+  isCapture?: boolean;
   onClick?: () => void;
 }
 
@@ -18,6 +19,7 @@ const Square = React.memo(function Square({
   isValidTarget = false,
   isLastMove = false,
   isCheck = false,
+  isCapture = false,
   onClick,
 }: SquareProps) {
   const className = [
@@ -27,6 +29,7 @@ const Square = React.memo(function Square({
     isValidTarget && 'square--valid-target',
     isLastMove && 'square--last-move',
     isCheck && 'square--check',
+    isCapture && 'square--capture',
   ].filter(Boolean).join(' ');
 
   return (

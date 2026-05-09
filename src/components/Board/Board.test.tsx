@@ -66,4 +66,20 @@ describe('Board', () => {
     expect(onSquareClick).toHaveBeenCalledTimes(1);
     expect(onSquareClick).toHaveBeenCalledWith('e2');
   });
+
+  it('should render board with default orientation when isFlipped is not provided', () => {
+    render(<Board {...defaultProps} />);
+    const a1 = screen.getByLabelText('Square a1');
+    expect(a1).toBeInTheDocument();
+    const h8 = screen.getByLabelText('Square h8');
+    expect(h8).toBeInTheDocument();
+  });
+
+  it('should render flipped board when isFlipped is true', () => {
+    render(<Board {...defaultProps} isFlipped={true} />);
+    const a1 = screen.getByLabelText('Square a1');
+    expect(a1).toBeInTheDocument();
+    const h8 = screen.getByLabelText('Square h8');
+    expect(h8).toBeInTheDocument();
+  });
 });

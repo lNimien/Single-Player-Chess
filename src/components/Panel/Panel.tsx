@@ -13,6 +13,8 @@ interface PanelProps {
   isAIThinking: boolean;
   onToggleAI: () => void;
   onSetAILevel: (level: number) => void;
+  onOpenSettings: () => void;
+  onExportPGN: () => void;
 }
 
 function Panel({
@@ -27,6 +29,8 @@ function Panel({
   isAIThinking,
   onToggleAI,
   onSetAILevel,
+  onOpenSettings,
+  onExportPGN,
 }: PanelProps) {
   const turnText = `${sideToMove === 'white' ? 'White' : 'Black'} to move`;
 
@@ -106,6 +110,8 @@ function Panel({
       <div className="panel__actions">
         <button type="button" onClick={onNewGame}>New Game</button>
         <button type="button" onClick={onUndo}>Undo</button>
+        <button type="button" onClick={onExportPGN}>Export PGN</button>
+        <button type="button" onClick={onOpenSettings} aria-label="Settings">Settings</button>
       </div>
     </aside>
   );

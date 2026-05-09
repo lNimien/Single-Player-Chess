@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import type { GameState, GameMove } from '../state/game';
 import { createGame, makeMove, undoMove, getLegalMoves, isGameOver } from '../state/game';
-import { toSquareIndex } from '../logic';
+import { toSquareIndex, isInCheck } from '../logic';
 import type { Algebraic, PieceType } from '../logic';
 import { getAIMove } from '../logic/ai';
 
@@ -23,6 +23,71 @@ export interface UseChessReturn {
   isAIThinking: boolean;
   toggleAI: () => void;
   setAILevel: (level: number) => void;
+  playerColor: 'white' | 'black';
+  animationsEnabled: boolean;
+  soundsEnabled: boolean;
+  togglePlayerColor: () => void;
+  toggleAnimations: () => void;
+  toggleSounds: () => void;
+}
+
+function playMoveSound() {
+  if (typeof AudioContext === 'undefined') return;
+  const audioCtx = new AudioContext();
+  const oscillator = audioCtx.createOscillator();
+  const gainNode = audioCtx.createGain();
+  oscillator.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+  oscillator.type = 'sine';
+  oscillator.frequency.setValueAtTime(300, audioCtx.currentTime);
+  oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
+  gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+  oscillator.start();
+  oscillator.stop(audioCtx.currentTime + 0.1);
+}
+
+function playCaptureSound() {
+  if (typeof AudioContext === 'undefined') return;
+  const audioCtx = new AudioContext();
+  const oscillator = audioCtx.createOscillator();
+  const gainNode = audioCtx.createGain();
+  oscillator.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+  oscillator.type = 'square';
+  oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
+  gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+  oscillator.start();
+  oscillator.stop(audioCtx.currentTime + 0.15);
+}
+
+function playCheckSound() {
+  if (typeof AudioContext === 'undefined') return;
+  const audioCtx = new AudioContext();
+  const oscillator = audioCtx.createOscillator();
+  const gainNode = audioCtx.createGain();
+  oscillator.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+  oscillator.type = 'sine';
+  oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+  oscillator.frequency.setValueAtTime(800, audioCtx.currentTime + 0.1);
+  gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+  oscillator.start();
+  oscillator.stop(audioCtx.currentTime + 0.2);
+}
+
+function playSoundForMove(move: ReturnType<typeof makeMove>, matchingMove: { captured: unknown }) {
+  const nextSide = move.sideToMove;
+  const isCheck = isInCheck(move.board, nextSide);
+  if (isCheck) {
+    playCheckSound();
+  } else if (matchingMove.captured) {
+    playCaptureSound();
+  } else {
+    playMoveSound();
+  }
 }
 
 export function useChess(): UseChessReturn {
@@ -32,6 +97,9 @@ export function useChess(): UseChessReturn {
   const [aiEnabled, setAiEnabled] = useState(false);
   const [aiLevel, setAiLevel] = useState(3);
   const [isAIThinking, setIsAIThinking] = useState(false);
+  const [playerColor, setPlayerColor] = useState<'white' | 'black'>('white');
+  const [animationsEnabled, setAnimationsEnabled] = useState(true);
+  const [soundsEnabled, setSoundsEnabled] = useState(true);
 
   const legalMoves = useMemo(() => {
     if (!selectedSquare) return [];
@@ -59,10 +127,11 @@ export function useChess(): UseChessReturn {
   }, [aiEnabled, aiLevel, game, gameOver, isAIThinking]);
 
   useEffect(() => {
-    if (aiEnabled && game.sideToMove === 'black' && !gameOver && !isAIThinking) {
+    const aiSide = playerColor === 'white' ? 'black' : 'white';
+    if (aiEnabled && game.sideToMove === aiSide && !gameOver && !isAIThinking) {
       playAIMove();
     }
-  }, [game.sideToMove, aiEnabled, gameOver, isAIThinking, playAIMove]);
+  }, [game.sideToMove, aiEnabled, playerColor, gameOver, isAIThinking, playAIMove]);
 
   const toggleAI = useCallback(() => {
     setAiEnabled((prev) => !prev);
@@ -70,6 +139,18 @@ export function useChess(): UseChessReturn {
 
   const setAILevel = useCallback((level: number) => {
     setAiLevel(level);
+  }, []);
+
+  const togglePlayerColor = useCallback(() => {
+    setPlayerColor((prev) => (prev === 'white' ? 'black' : 'white'));
+  }, []);
+
+  const toggleAnimations = useCallback(() => {
+    setAnimationsEnabled((prev) => !prev);
+  }, []);
+
+  const toggleSounds = useCallback(() => {
+    setSoundsEnabled((prev) => !prev);
   }, []);
 
   const selectSquare = useCallback(
@@ -102,7 +183,11 @@ export function useChess(): UseChessReturn {
             return prevGame;
           }
           setSelectedSquare(null);
-          return makeMove(prevGame, matchingMove);
+          const nextGame = makeMove(prevGame, matchingMove);
+          if (soundsEnabled) {
+            playSoundForMove(nextGame, matchingMove);
+          }
+          return nextGame;
         }
 
         if (square.piece && square.piece.color === prevGame.sideToMove) {
@@ -114,7 +199,7 @@ export function useChess(): UseChessReturn {
         return prevGame;
       });
     },
-    [selectedSquare],
+    [selectedSquare, soundsEnabled],
   );
 
   const selectPromotionPiece = useCallback(
@@ -129,11 +214,15 @@ export function useChess(): UseChessReturn {
       );
       if (!matchingMove) return;
       const updatedMove = { ...matchingMove, promotionPiece: pieceType };
-      setGame(makeMove(game, updatedMove));
+      const nextGame = makeMove(game, updatedMove);
+      if (soundsEnabled) {
+        playSoundForMove(nextGame, matchingMove);
+      }
+      setGame(nextGame);
       setPromotionPending(null);
       setSelectedSquare(null);
     },
-    [game, promotionPending],
+    [game, promotionPending, soundsEnabled],
   );
 
   const cancelPromotion = useCallback(() => {
@@ -173,5 +262,11 @@ export function useChess(): UseChessReturn {
     isAIThinking,
     toggleAI,
     setAILevel,
+    playerColor,
+    animationsEnabled,
+    soundsEnabled,
+    togglePlayerColor,
+    toggleAnimations,
+    toggleSounds,
   };
 }

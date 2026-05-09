@@ -10,6 +10,37 @@ vi.mock('../logic/ai', () => ({
 
 import { getAIMove } from '../logic/ai';
 
+function createMockAudioContext() {
+  const oscillator = {
+    connect: vi.fn().mockReturnThis(),
+    start: vi.fn(),
+    stop: vi.fn(),
+    type: 'sine',
+    frequency: { setValueAtTime: vi.fn(), exponentialRampToValueAtTime: vi.fn() },
+  };
+  const gainNode = {
+    connect: vi.fn().mockReturnThis(),
+    gain: { setValueAtTime: vi.fn(), exponentialRampToValueAtTime: vi.fn() },
+  };
+  return {
+    createOscillator: vi.fn(function () { return oscillator; }),
+    createGain: vi.fn(function () { return gainNode; }),
+    currentTime: 0,
+    destination: {},
+  };
+}
+
+let mockAudioContextInstance: ReturnType<typeof createMockAudioContext>;
+
+beforeEach(() => {
+  mockAudioContextInstance = createMockAudioContext();
+  global.AudioContext = vi.fn(function () { return mockAudioContextInstance; }) as unknown as typeof AudioContext;
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
 function createMockAIMove(): Move {
   return {
     from: 52,
@@ -413,5 +444,125 @@ describe('useChess', () => {
     expect(result.current.history).toHaveLength(4);
 
     vi.useRealTimers();
+  });
+
+  it('should have initial playerColor as white', () => {
+    const { result } = renderHook(() => useChess());
+    expect(result.current.playerColor).toBe('white');
+  });
+
+  it('should toggle playerColor between white and black', () => {
+    const { result } = renderHook(() => useChess());
+    expect(result.current.playerColor).toBe('white');
+
+    act(() => result.current.togglePlayerColor());
+    expect(result.current.playerColor).toBe('black');
+
+    act(() => result.current.togglePlayerColor());
+    expect(result.current.playerColor).toBe('white');
+  });
+
+  it('should have initial animationsEnabled as true', () => {
+    const { result } = renderHook(() => useChess());
+    expect(result.current.animationsEnabled).toBe(true);
+  });
+
+  it('should toggle animationsEnabled', () => {
+    const { result } = renderHook(() => useChess());
+    expect(result.current.animationsEnabled).toBe(true);
+
+    act(() => result.current.toggleAnimations());
+    expect(result.current.animationsEnabled).toBe(false);
+
+    act(() => result.current.toggleAnimations());
+    expect(result.current.animationsEnabled).toBe(true);
+  });
+
+  it('should have initial soundsEnabled as true', () => {
+    const { result } = renderHook(() => useChess());
+    expect(result.current.soundsEnabled).toBe(true);
+  });
+
+  it('should toggle soundsEnabled', () => {
+    const { result } = renderHook(() => useChess());
+    expect(result.current.soundsEnabled).toBe(true);
+
+    act(() => result.current.toggleSounds());
+    expect(result.current.soundsEnabled).toBe(false);
+
+    act(() => result.current.toggleSounds());
+    expect(result.current.soundsEnabled).toBe(true);
+  });
+
+  it('should trigger AI as white when playerColor is black', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    (getAIMove as ReturnType<typeof vi.fn>).mockReturnValue(createMockAIMove());
+
+    const { result } = renderHook(() => useChess());
+
+    act(() => result.current.toggleAI());
+    act(() => result.current.togglePlayerColor());
+
+    expect(result.current.playerColor).toBe('black');
+    expect(result.current.aiEnabled).toBe(true);
+    expect(result.current.currentTurn).toBe('white');
+    expect(result.current.isAIThinking).toBe(true);
+
+    await act(async () => {
+      vi.advanceTimersByTime(400);
+    });
+
+    await waitFor(() => expect(result.current.isAIThinking).toBe(false));
+    expect(result.current.history).toHaveLength(1);
+
+    vi.useRealTimers();
+  });
+
+  it('should play move sound when sounds are enabled and a move is made', () => {
+    const { result } = renderHook(() => useChess());
+
+    act(() => result.current.selectSquare('e2'));
+    act(() => result.current.selectSquare('e4'));
+
+    expect(global.AudioContext).toHaveBeenCalled();
+    expect(mockAudioContextInstance.createOscillator).toHaveBeenCalled();
+  });
+
+  it('should not play sound when sounds are disabled', () => {
+    const { result } = renderHook(() => useChess());
+
+    act(() => result.current.toggleSounds());
+    expect(result.current.soundsEnabled).toBe(false);
+
+    act(() => result.current.selectSquare('e2'));
+    act(() => result.current.selectSquare('e4'));
+
+    expect(global.AudioContext).not.toHaveBeenCalled();
+  });
+
+  it('should play capture sound on a capture move', () => {
+    const { result } = renderHook(() => useChess());
+
+    // Scholar's mate sequence that includes captures
+    // e2-e4, e7-e5, d2-d4, d7-d5, e4-d5 (capture)
+    act(() => result.current.selectSquare('e2'));
+    act(() => result.current.selectSquare('e4'));
+
+    act(() => result.current.selectSquare('e7'));
+    act(() => result.current.selectSquare('e5'));
+
+    act(() => result.current.selectSquare('d2'));
+    act(() => result.current.selectSquare('d4'));
+
+    act(() => result.current.selectSquare('d7'));
+    act(() => result.current.selectSquare('d5'));
+
+    const callCountBefore = (global.AudioContext as ReturnType<typeof vi.fn>).mock.calls.length;
+
+    act(() => result.current.selectSquare('e4'));
+    act(() => result.current.selectSquare('d5'));
+
+    expect(result.current.history[result.current.history.length - 1].captured).not.toBeNull();
+    expect(global.AudioContext).toHaveBeenCalledTimes(callCountBefore + 1);
   });
 });

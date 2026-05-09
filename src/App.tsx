@@ -1,13 +1,17 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useChess } from './hooks/useChess';
 import Board from './components/Board/Board';
 import Panel from './components/Panel/Panel';
 import PromotionModal from './components/PromotionModal/PromotionModal';
 import GameOverOverlay from './components/GameOverOverlay/GameOverOverlay';
+import SettingsModal from './components/SettingsModal/SettingsModal';
+import { downloadPGN } from './state/pgn';
 import { isInCheck, findKing, fromSquareIndex } from './logic';
 import './App.css';
 
 function App() {
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
   const {
     game,
     selectedSquare,
@@ -26,6 +30,12 @@ function App() {
     isAIThinking,
     toggleAI,
     setAILevel,
+    playerColor,
+    animationsEnabled,
+    soundsEnabled,
+    togglePlayerColor,
+    toggleAnimations,
+    toggleSounds,
   } = useChess();
 
   const lastMove = useMemo(() => {
@@ -56,6 +66,7 @@ function App() {
             lastMove={lastMove}
             checkSquare={checkSquare}
             onSquareClick={selectSquare}
+            isFlipped={playerColor === 'black'}
           />
           <GameOverOverlay
             result={game.result}
@@ -75,6 +86,8 @@ function App() {
           isAIThinking={isAIThinking}
           onToggleAI={toggleAI}
           onSetAILevel={setAILevel}
+          onOpenSettings={() => setSettingsOpen(true)}
+          onExportPGN={() => downloadPGN(game)}
         />
       </main>
       <PromotionModal
@@ -82,6 +95,16 @@ function App() {
         color={currentTurn}
         onSelect={selectPromotionPiece}
         onCancel={cancelPromotion}
+      />
+      <SettingsModal
+        isOpen={settingsOpen}
+        playerColor={playerColor}
+        animationsEnabled={animationsEnabled}
+        soundsEnabled={soundsEnabled}
+        onClose={() => setSettingsOpen(false)}
+        onToggleColor={togglePlayerColor}
+        onToggleAnimations={toggleAnimations}
+        onToggleSounds={toggleSounds}
       />
     </div>
   );

@@ -54,11 +54,17 @@ describe('Square', () => {
     expect(container.firstChild).toHaveClass('square--check');
   });
 
+  it('should render capture state', () => {
+    const square = makeSquare();
+    const { container } = render(<Square square={square} isCapture />);
+    expect(container.firstChild).toHaveClass('square--capture');
+  });
+
   it('should render piece inside square', () => {
     const piece = createPiece('rook', 'white');
     const square = makeSquare({ piece });
     render(<Square square={square} />);
-    expect(screen.getByLabelText('White rook')).toBeInTheDocument();
+    expect(screen.getByAltText('white rook')).toBeInTheDocument();
   });
 
   it('should call onClick when clicked', () => {

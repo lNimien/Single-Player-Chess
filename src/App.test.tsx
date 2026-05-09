@@ -1,7 +1,35 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './App';
+
+beforeEach(() => {
+  global.AudioContext = vi.fn(function () {
+    return {
+      createOscillator: vi.fn(function () {
+        return {
+          connect: vi.fn().mockReturnThis(),
+          start: vi.fn(),
+          stop: vi.fn(),
+          type: 'sine',
+          frequency: { setValueAtTime: vi.fn(), exponentialRampToValueAtTime: vi.fn() },
+        };
+      }),
+      createGain: vi.fn(function () {
+        return {
+          connect: vi.fn().mockReturnThis(),
+          gain: { setValueAtTime: vi.fn(), exponentialRampToValueAtTime: vi.fn() },
+        };
+      }),
+      currentTime: 0,
+      destination: {},
+    };
+  }) as unknown as typeof AudioContext;
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe('App promotion modal', () => {
   it('should render promotion modal when a pawn reaches the last rank', async () => {

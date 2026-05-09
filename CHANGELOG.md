@@ -22,16 +22,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Foundation structure: `src/logic/`, `src/state/`, `src/components/`, `src/hooks/`, `src/styles/`
 - Game state management with immutable updates, castling rights, en passant, halfmove clock, SAN notation, undo, and result detection
 - `useChess` React hook with selection, legal moves, move execution, undo, and reset
-- UI components: `Piece` (SVG), `Square` (states), `Board` (8×8 grid), `Panel` (history, status, actions), `App` (wiring)
+- UI components: `Piece` (PNG assets), `Square` (states/capture animation), `Board` (8×8 grid + flip), `Panel` (history, status, AI/settings/export actions), `App` (wiring)
 - Playwright E2E testing with Chromium browser and smoke test
 - `@testing-library/jest-dom` for better DOM assertions
 - Pawn promotion modal with piece selector (queen, rook, bishop, knight)
 - Game over overlay for checkmate and stalemate with fade + scale animation
-- Pawn promotion modal with piece selector (queen, rook, bishop, knight)
-- Game over overlay for checkmate and stalemate with fade + scale animation
 - **AI opponent** — minimax + alpha-beta pruning with piece-square tables (PSTs), king safety evaluation, 5 difficulty levels (Beginner to Expert), plays as Black
 - Panel AI controls: toggle, difficulty selector, thinking indicator
-- 188 tests across 15 test files
+- Settings modal for player color, animation toggle, and sound toggle
+- Board flip support for playing as Black
+- Web Audio API move/capture/check sounds
+- PGN export and download support
+- 221 tests across 17 test files
 
 ### Stack
 

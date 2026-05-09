@@ -1,6 +1,6 @@
 # ChessWebsite — TODO
 
-## Status: ✅ MVP + AI COMPLETE
+## Status: ✅ MVP + AI + SETTINGS COMPLETE
 
 ### Core Features Implemented
 - [x] Standard 8x8 chess board with correct initial piece placement
@@ -19,26 +19,28 @@
 - [x] Reset game to starting position
 - [x] Checkmate/stalemate overlay
 - [x] **AI opponent** — minimax + alpha-beta pruning, 5 difficulty levels, plays as Black
+- [x] PNG chess piece assets with realistic piece images
+- [x] Settings modal for player color, animations, and sounds
+- [x] Capture flash animation
+- [x] Board flip (play as Black)
+- [x] Sound effects on move/capture/check via Web Audio API
+- [x] Export game to PGN
 
 ### Architecture
 - [x] `src/logic/` — Pure chess rules + AI engine (57 tests)
 - [x] `src/state/` — Game state management (53 tests)
-- [x] `src/hooks/` — React hook orchestration with AI (18 tests)
-- [x] `src/components/` — UI components with AI panel (59 tests)
+- [x] `src/hooks/` — React hook orchestration with AI/settings/sounds
+- [x] `src/components/` — UI components with AI panel, settings modal, PNG pieces
 - [x] `src/App.tsx` — Root wiring (1 integration test)
 
 ### Testing
-- [x] **188 tests across 15 test files — ALL PASSING**
+- [x] **221 tests across 17 test files — ALL PASSING**
 - [x] Coverage: 96.22% statements, 95.23% branches, 98.3% functions
 - [x] Playwright E2E smoke test configured
 
 ## Backlog (Nice-to-Have)
 
-- [ ] Piece capture animation
-- [ ] Board flip (play as Black)
 - [ ] Move validation error feedback
 - [ ] Time control
-- [ ] Sound effects on move/capture/check
-- [ ] Export game to PGN
 - [ ] Import game from FEN
 - [ ] Responsive improvements for very small screens

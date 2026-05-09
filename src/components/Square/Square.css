@@ -22,6 +22,15 @@
 .square--last-move { background-color: var(--color-square-last-move) !important; }
 .square--check { background-color: var(--color-square-check) !important; }
 
+@keyframes captureFlash {
+  0% { background-color: rgba(255, 0, 0, 0.4); }
+  100% { background-color: transparent; }
+}
+
+.square--capture {
+  animation: captureFlash 300ms ease-out;
+}
+
 .square__indicator {
   position: absolute;
   width: 30%;
@@ -39,4 +48,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .square { transition: none; }
+  .square--capture { animation: none; }
 }
