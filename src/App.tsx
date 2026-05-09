@@ -3,6 +3,7 @@ import { useChess } from './hooks/useChess';
 import Board from './components/Board/Board';
 import Panel from './components/Panel/Panel';
 import PromotionModal from './components/PromotionModal/PromotionModal';
+import GameOverOverlay from './components/GameOverOverlay/GameOverOverlay';
 import { isInCheck, findKing, fromSquareIndex } from './logic';
 import './App.css';
 
@@ -41,15 +42,22 @@ function App() {
         <h1 className="app__title">Chess</h1>
       </header>
       <main className="app__main">
-        <Board
-          squares={game.board}
-          sideToMove={currentTurn}
-          selectedSquare={selectedSquare}
-          legalMoves={legalMoves}
-          lastMove={lastMove}
-          checkSquare={checkSquare}
-          onSquareClick={selectSquare}
-        />
+        <div style={{ position: 'relative' }}>
+          <Board
+            squares={game.board}
+            sideToMove={currentTurn}
+            selectedSquare={selectedSquare}
+            legalMoves={legalMoves}
+            lastMove={lastMove}
+            checkSquare={checkSquare}
+            onSquareClick={selectSquare}
+          />
+          <GameOverOverlay
+            result={game.result}
+            winner={game.result === 'checkmate' ? (game.sideToMove === 'white' ? 'black' : 'white') : null}
+            onNewGame={reset}
+          />
+        </div>
         <Panel
           sideToMove={currentTurn}
           history={history}
