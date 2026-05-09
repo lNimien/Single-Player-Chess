@@ -57,5 +57,17 @@
 - ✅ Project initialized with Vite + React + TypeScript
 - ✅ AGENTS.md created with agent workflow guide
 - ✅ SPEC.md created with full project specification
-- ✅ vitest.config.ts configured with jsdom environment
+- ✅ vitest.config.ts configured with jsdom test environment
 - ✅ TODO.md and CHANGELOG.md created
+- ✅ .gitignore configured
+- ✅ package.json scripts configured (test, test:watch, test:coverage)
+- ✅ Initial git commit: "chore: initial project foundation"
+
+## Next: Chess Logic (TDD)
+
+Start TDD on `src/logic/` modules following RED → GREEN → REFACTOR:
+1. `src/logic/pieces.ts` — Piece types, colors, values
+2. `src/logic/board.ts` — Board representation, square mapping
+3. `src/logic/moves.ts` — Move generation (pseudo-legal)
+4. `src/logic/validation.ts` — Legal move detection, check/checkmate/stalemate
+5. `src/logic/index.ts` — Public API exports
