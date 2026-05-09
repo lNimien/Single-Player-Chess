@@ -20,11 +20,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - vitest.config.ts with jsdom test environment
 - TODO.md and CHANGELOG.md for progress tracking
 - Foundation structure: `src/logic/`, `src/state/`, `src/components/`, `src/hooks/`, `src/styles/`
+- Game state management with immutable updates, castling rights, en passant, halfmove clock, SAN notation, undo, and result detection
+- `useChess` React hook with selection, legal moves, move execution, undo, and reset
+- UI components: `Piece` (SVG), `Square` (states), `Board` (8×8 grid), `Panel` (history, status, actions), `App` (wiring)
+- Playwright E2E testing with Chromium browser and smoke test
+- `@testing-library/jest-dom` for better DOM assertions
 
 ### Stack
 
 - React 18
 - Vite
 - TypeScript (strict mode)
-- Vitest + Testing Library
+- Vitest + Testing Library + Playwright
 - Plain CSS (no Tailwind)
