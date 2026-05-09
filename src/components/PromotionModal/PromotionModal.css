@@ -1,0 +1,87 @@
+.promotion-modal__overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(4px);
+}
+
+.promotion-modal {
+  background-color: #f5f0e8;
+  border: 3px solid var(--color-piece-outline);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  min-width: 280px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+
+.promotion-modal__title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-piece-outline);
+  margin: 0;
+}
+
+.promotion-modal__options {
+  display: flex;
+  gap: 12px;
+}
+
+.promotion-modal__option {
+  width: 64px;
+  height: 64px;
+  border: 2px solid var(--color-piece-outline);
+  border-radius: 8px;
+  background-color: var(--color-square-light);
+  cursor: pointer;
+  padding: 8px;
+  transition: background-color 150ms ease-out, transform 100ms ease-out;
+}
+
+.promotion-modal__option:hover {
+  background-color: var(--color-square-selected);
+  transform: scale(1.05);
+}
+
+.promotion-modal__option:active {
+  transform: scale(0.95);
+}
+
+.promotion-modal__option:focus-visible {
+  outline: 2px solid var(--color-piece-outline);
+  outline-offset: 2px;
+}
+
+.promotion-modal__cancel {
+  padding: 10px 24px;
+  border: 2px solid var(--color-piece-outline);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--color-piece-outline);
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 150ms ease-out;
+  min-height: 44px;
+}
+
+.promotion-modal__cancel:hover {
+  background-color: var(--color-piece-outline);
+  color: var(--color-piece-white);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .promotion-modal__option,
+  .promotion-modal__cancel {
+    transition: none;
+  }
+}

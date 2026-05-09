@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback } from 'react';
 import type { GameState, GameMove } from '../state/game';
 import { createGame, makeMove, undoMove, getLegalMoves, isGameOver } from '../state/game';
 import { toSquareIndex } from '../logic';
-import type { Algebraic } from '../logic';
+import type { Algebraic, PieceType } from '../logic';
 
 export interface UseChessReturn {
   game: GameState;
@@ -14,11 +14,15 @@ export interface UseChessReturn {
   selectSquare: (algebraic: string) => void;
   undo: () => void;
   reset: () => void;
+  promotionPending: { from: string; to: string } | null;
+  selectPromotionPiece: (pieceType: PieceType) => void;
+  cancelPromotion: () => void;
 }
 
 export function useChess(): UseChessReturn {
   const [game, setGame] = useState<GameState>(() => createGame());
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
+  const [promotionPending, setPromotionPending] = useState<{ from: string; to: string } | null>(null);
 
   const legalMoves = useMemo(() => {
     if (!selectedSquare) return [];
@@ -56,6 +60,10 @@ export function useChess(): UseChessReturn {
         );
 
         if (matchingMove) {
+          if (matchingMove.isPromotion) {
+            setPromotionPending({ from: selectedSquare, to: algebraic });
+            return prevGame;
+          }
           setSelectedSquare(null);
           return makeMove(prevGame, matchingMove);
         }
@@ -72,15 +80,41 @@ export function useChess(): UseChessReturn {
     [selectedSquare],
   );
 
+  const selectPromotionPiece = useCallback(
+    (pieceType: PieceType) => {
+      if (!promotionPending) return;
+      const allLegal = getLegalMoves(game);
+      const matchingMove = allLegal.find(
+        (move) =>
+          move.fromAlgebraic === promotionPending.from &&
+          move.toAlgebraic === promotionPending.to &&
+          move.isPromotion,
+      );
+      if (!matchingMove) return;
+      const updatedMove = { ...matchingMove, promotionPiece: pieceType };
+      setGame(makeMove(game, updatedMove));
+      setPromotionPending(null);
+      setSelectedSquare(null);
+    },
+    [game, promotionPending],
+  );
+
+  const cancelPromotion = useCallback(() => {
+    setPromotionPending(null);
+    setSelectedSquare(null);
+  }, []);
+
   const undo = useCallback(() => {
     setGame((prevGame) => {
       setSelectedSquare(null);
+      setPromotionPending(null);
       return undoMove(prevGame);
     });
   }, []);
 
   const reset = useCallback(() => {
     setSelectedSquare(null);
+    setPromotionPending(null);
     setGame(createGame());
   }, []);
 
@@ -94,5 +128,8 @@ export function useChess(): UseChessReturn {
     selectSquare,
     undo,
     reset,
+    promotionPending,
+    selectPromotionPiece,
+    cancelPromotion,
   };
 }

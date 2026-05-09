@@ -9,6 +9,7 @@ import {
   isInCheck,
   getGameResult,
   createPiece,
+  FEN_SYMBOLS,
 } from '../logic';
 
 export interface GameState {
@@ -66,7 +67,7 @@ function buildNotation(move: Move, board: BoardSquare[], nextSide: PieceColor): 
     notation += move.toAlgebraic;
 
     if (move.isPromotion && move.promotionPiece) {
-      notation += '=' + move.promotionPiece[0].toUpperCase();
+      notation += '=' + FEN_SYMBOLS['white'][move.promotionPiece];
     }
   }
 

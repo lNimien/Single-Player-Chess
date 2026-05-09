@@ -173,20 +173,115 @@ describe('useChess', () => {
       ['a4', 'a3'],
       ['h6', 'g7'],
       ['a3', 'b2'],
-      ['g7', 'f8'],
     ];
 
     for (const [from, to] of moves) {
-      act(() => {
-        result.current.selectSquare(from);
-      });
-      act(() => {
-        result.current.selectSquare(to);
-      });
+      act(() => result.current.selectSquare(from));
+      act(() => result.current.selectSquare(to));
     }
+
+    act(() => result.current.selectSquare('g7'));
+    act(() => result.current.selectSquare('f8'));
+
+    expect(result.current.promotionPending).toEqual({ from: 'g7', to: 'f8' });
+
+    act(() => result.current.selectPromotionPiece('queen'));
 
     expect(result.current.game.board.find((sq) => sq.algebraic === 'f8')?.piece?.type).toBe('queen');
     expect(result.current.history).toHaveLength(9);
     expect(result.current.history[8].notation).toContain('=');
+  });
+
+  it('should set promotionPending when a pawn reaches the last rank', () => {
+    const { result } = renderHook(() => useChess());
+
+    const moves: [string, string][] = [
+      ['h2', 'h4'],
+      ['a7', 'a5'],
+      ['h4', 'h5'],
+      ['a5', 'a4'],
+      ['h5', 'h6'],
+      ['a4', 'a3'],
+      ['h6', 'g7'],
+      ['a3', 'b2'],
+    ];
+
+    for (const [from, to] of moves) {
+      act(() => result.current.selectSquare(from));
+      act(() => result.current.selectSquare(to));
+    }
+
+    act(() => result.current.selectSquare('g7'));
+    act(() => result.current.selectSquare('f8'));
+
+    expect(result.current.promotionPending).toEqual({ from: 'g7', to: 'f8' });
+    expect(result.current.game.board.find((sq) => sq.algebraic === 'g7')?.piece?.type).toBe('pawn');
+    expect(result.current.game.board.find((sq) => sq.algebraic === 'f8')?.piece?.type).toBe('bishop');
+    expect(result.current.history).toHaveLength(8);
+  });
+
+  it('should complete promotion with selected piece', () => {
+    const { result } = renderHook(() => useChess());
+
+    const moves: [string, string][] = [
+      ['h2', 'h4'],
+      ['a7', 'a5'],
+      ['h4', 'h5'],
+      ['a5', 'a4'],
+      ['h5', 'h6'],
+      ['a4', 'a3'],
+      ['h6', 'g7'],
+      ['a3', 'b2'],
+    ];
+
+    for (const [from, to] of moves) {
+      act(() => result.current.selectSquare(from));
+      act(() => result.current.selectSquare(to));
+    }
+
+    act(() => result.current.selectSquare('g7'));
+    act(() => result.current.selectSquare('f8'));
+
+    expect(result.current.promotionPending).not.toBeNull();
+
+    act(() => result.current.selectPromotionPiece('knight'));
+
+    expect(result.current.promotionPending).toBeNull();
+    expect(result.current.game.board.find((sq) => sq.algebraic === 'f8')?.piece?.type).toBe('knight');
+    expect(result.current.game.board.find((sq) => sq.algebraic === 'f8')?.piece?.color).toBe('white');
+    expect(result.current.history).toHaveLength(9);
+    expect(result.current.history[8].notation).toContain('=N');
+  });
+
+  it('should cancel promotion and clear pending state', () => {
+    const { result } = renderHook(() => useChess());
+
+    const moves: [string, string][] = [
+      ['h2', 'h4'],
+      ['a7', 'a5'],
+      ['h4', 'h5'],
+      ['a5', 'a4'],
+      ['h5', 'h6'],
+      ['a4', 'a3'],
+      ['h6', 'g7'],
+      ['a3', 'b2'],
+    ];
+
+    for (const [from, to] of moves) {
+      act(() => result.current.selectSquare(from));
+      act(() => result.current.selectSquare(to));
+    }
+
+    act(() => result.current.selectSquare('g7'));
+    act(() => result.current.selectSquare('f8'));
+
+    expect(result.current.promotionPending).not.toBeNull();
+
+    act(() => result.current.cancelPromotion());
+
+    expect(result.current.promotionPending).toBeNull();
+    expect(result.current.selectedSquare).toBeNull();
+    expect(result.current.game.board.find((sq) => sq.algebraic === 'g7')?.piece?.type).toBe('pawn');
+    expect(result.current.history).toHaveLength(8);
   });
 });

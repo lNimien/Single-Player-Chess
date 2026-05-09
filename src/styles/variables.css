@@ -13,6 +13,7 @@
   --color-piece-black: #3d2817;
   --color-piece-outline-light: #4a3728;
   --color-piece-outline-dark: #1a1108;
+  --color-piece-outline: var(--color-piece-outline-light);
 
   /* Typography */
   --font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;

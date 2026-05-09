@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useChess } from './hooks/useChess';
 import Board from './components/Board/Board';
 import Panel from './components/Panel/Panel';
+import PromotionModal from './components/PromotionModal/PromotionModal';
 import { isInCheck, findKing, fromSquareIndex } from './logic';
 import './App.css';
 
@@ -16,6 +17,9 @@ function App() {
     selectSquare,
     undo,
     reset,
+    promotionPending,
+    selectPromotionPiece,
+    cancelPromotion,
   } = useChess();
 
   const lastMove = useMemo(() => {
@@ -55,6 +59,12 @@ function App() {
           onUndo={undo}
         />
       </main>
+      <PromotionModal
+        isOpen={promotionPending !== null}
+        color={currentTurn}
+        onSelect={selectPromotionPiece}
+        onCancel={cancelPromotion}
+      />
     </div>
   );
 }
