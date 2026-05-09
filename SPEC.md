@@ -154,3 +154,38 @@ Artifacts are stored in `engram` (preferred) or `openspec/` (for team sharing).
 | 2026-05-09 | Separate `logic/` from UI components | Enables unit testing of chess rules without DOM. Supports future extraction. |
 | 2026-05-09 | Store en passant as flag on move, not as special move type | Simplifies move generation. En passant is the only move requiring history. |
 | 2026-05-09 | Plain CSS with CSS custom properties (no Tailwind) | Explicit portfolio constraint. CSS variables provide adequate flexibility. |
+
+---
+
+## 10. Delta Spec — Board Logic Foundation
+
+### Board Model
+
+- `src/logic/board.ts` represents an 8x8 chess board as 64 `BoardSquare` entries.
+- Square indexes start at `a1 = 0` and end at `h8 = 63`.
+- Each square exposes its index, algebraic coordinate, nullable piece, and light/dark metadata.
+- The initial board is derived from the standard chess starting FEN.
+
+### FEN Support
+
+- `parseFEN` supports piece placement, side to move, castling rights, en passant target, halfmove clock, and fullmove number.
+- `boardToFEN` serializes board piece placement only; game metadata is intentionally not included in this function.
+
+---
+
+## 11. Delta Spec — Pseudo-Legal Move Generation
+
+`src/logic/moves.ts` generates pseudo-legal moves only: it applies piece movement, board bounds, occupancy, captures, promotion flags, castling availability, and en passant metadata, but it does not reject moves that leave the king in check. Check/checkmate filtering belongs to `src/logic/validation.ts`.
+
+### Requirements
+
+- Pawns move one square forward into empty squares, two squares from their starting rank when both path squares are empty, capture diagonally against enemy pieces, mark promotion on the final rank, and expose an en passant target square for double pushes.
+- Sliding pieces stop at board edges, before friendly pieces, and after including a capture on enemy pieces.
+- Knights jump in all in-bounds L-shapes and can capture enemies but not land on friendly pieces.
+- Kings move one square in any direction and can include castling moves when rights are present, the rook is present, and the path between king and rook is empty.
+- `generatePseudoLegalMoves` dispatches by the piece on the requested square and returns an empty list for empty squares.
+
+### Design Notes
+
+- Board coordinates use algebraic notation mapped through `toSquareIndex`/`fromSquareIndex` from `src/logic/board.ts`; move generation must not duplicate board coordinate types.
+- Move objects carry explicit booleans (`isEnPassant`, `isPromotion`) and nullable metadata (`promotionPiece`, `castling`, `enPassantTarget`) so later validation/state modules can interpret moves without re-deriving special-case intent.

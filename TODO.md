@@ -9,11 +9,11 @@
 - [ ] Create base CSS variables and global styles
 
 ### Chess Logic (Domain Layer — TDD)
-- [ ] `src/logic/pieces.ts` — Piece types, colors, values
-- [ ] `src/logic/board.ts` — Board representation, square mapping, FEN position parsing
-- [ ] `src/logic/moves.ts` — Move generation (pseudo-legal) for all piece types
-- [ ] `src/logic/validation.ts` — Legal move detection, check/checkmate/stalemate
-- [ ] `src/logic/index.ts` — Public API exports
+- [x] `src/logic/pieces.ts` — Piece types, colors, values
+- [x] `src/logic/board.ts` — Board representation, square mapping, FEN position parsing
+- [x] `src/logic/moves.ts` — Move generation (pseudo-legal) for all piece types
+- [x] `src/logic/validation.ts` — Legal move detection, check/checkmate/stalemate
+- [x] `src/logic/index.ts` — Public API exports
 
 ### Game State
 - [ ] `src/state/game.ts` — Game state: board, turn, history, result detection
@@ -52,6 +52,13 @@
 - [ ] Time control
 
 ## Done ✅
+
+### Chess Logic
+- ✅ `src/logic/pieces.ts` implemented with piece types, colors, material values, FEN symbols, and symbol parsing
+- ✅ `src/logic/board.ts` implemented with square indexing, initial board setup, and FEN parsing/serialization tests
+- ✅ `src/logic/moves.ts` implemented with pseudo-legal move generation for pawns, sliding pieces, knights, kings, castling, promotion, and en passant targets
+- ✅ `src/logic/validation.ts` implemented with attacked-square detection, legal move filtering, check, checkmate, stalemate, and game result detection
+- ✅ `src/logic/index.ts` added as public API barrel export
 
 ### Foundation
 - ✅ Project initialized with Vite + React + TypeScript
