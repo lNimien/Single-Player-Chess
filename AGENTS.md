@@ -86,6 +86,7 @@ REFACTOR → Improve code, keep tests green
 - Unit/domain logic: `src/logic/**/*.test.ts`
 - Component logic: `src/components/**/*.test.tsx`
 - Hooks: `src/hooks/**/*.test.ts`
+- E2E: `e2e/**/*.spec.ts`
 
 ### Test Naming Convention
 
@@ -266,10 +267,22 @@ Add entry **when you complete a change**, not at the end.
 ## Testing Scripts
 
 ```bash
-npm test              # Run all tests once
-npm run test:watch    # Run in watch mode
-npm run test:coverage # Run with coverage report
+npm test              # Run all unit tests once (Vitest)
+npm run test:watch    # Run unit tests in watch mode
+npm run test:coverage # Run unit tests with coverage report
+npm run test:e2e      # Run E2E tests (Playwright)
+npm run test:e2e:ui   # Run E2E tests with UI mode
 ```
+
+## UI/UX Skills Reference
+
+When implementing UI components, apply these skills for quality:
+
+- **ui-ux-pro-max**: Accessibility (4.5:1 contrast), touch targets ≥44×44px, animation 150–300ms, mobile-first, semantic color tokens, focus states, reduced-motion support.
+- **frontend-design**: Bold aesthetic direction, distinctive typography, cohesive color theme, CSS-only animations, unexpected layouts, atmospheric backgrounds.
+- **vercel-react-best-practices**: Memoization for expensive calculations, primitive effect dependencies, derived state during render, functional setState, startTransition for non-urgent updates, no inline components.
+
+Always prefer CSS transitions over JS animation libraries. No Tailwind.
 
 ---
 

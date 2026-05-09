@@ -144,6 +144,7 @@ Artifacts are stored in `engram` (preferred) or `openspec/` (for team sharing).
 - No dependency additions without SPEC.md update
 - All tests pass before commit
 - Zero tolerance for broken tests in main
+- UI skills applied: ui-ux-pro-max, frontend-design, vercel-react-best-practices
 
 ---
 
@@ -154,6 +155,7 @@ Artifacts are stored in `engram` (preferred) or `openspec/` (for team sharing).
 | 2026-05-09 | Separate `logic/` from UI components | Enables unit testing of chess rules without DOM. Supports future extraction. |
 | 2026-05-09 | Store en passant as flag on move, not as special move type | Simplifies move generation. En passant is the only move requiring history. |
 | 2026-05-09 | Plain CSS with CSS custom properties (no Tailwind) | Explicit portfolio constraint. CSS variables provide adequate flexibility. |
+| 2026-05-09 | Playwright for E2E testing alongside Vitest | Playwright provides real browser testing for critical user flows (game start, move, checkmate detection). Vitest covers unit/domain logic. |
 
 ---
 
