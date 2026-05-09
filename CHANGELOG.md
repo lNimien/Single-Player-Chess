@@ -25,6 +25,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - UI components: `Piece` (SVG), `Square` (states), `Board` (8×8 grid), `Panel` (history, status, actions), `App` (wiring)
 - Playwright E2E testing with Chromium browser and smoke test
 - `@testing-library/jest-dom` for better DOM assertions
+- Pawn promotion modal with piece selector (queen, rook, bishop, knight)
+- Game over overlay for checkmate and stalemate with fade + scale animation
+- 162 tests across 14 test files
 
 ### Stack
 
