@@ -159,6 +159,7 @@ Artifacts are stored in `engram` (preferred) or `openspec/` (for team sharing).
 | 2026-05-10 | Premium chess-club redesign via semantic CSS tokens | Addresses prior feedback that minor tweaks were insufficient while preserving plain CSS, no dependencies, and framework-agnostic chess logic. |
 | 2026-05-10 | Publish-ready mobile layout and repository link | The portfolio app must work comfortably at 375px mobile width, avoid horizontal scroll, keep controls touch-friendly, and expose the source repository through an accessible static SVG link. |
 | 2026-05-10 | Keep Vite 8 and upgrade `@vitejs/plugin-react` to v6 | Fixes clean deployment installs by aligning the React plugin peer dependency range with Vite 8 instead of downgrading the app's Vite version. |
+| 2026-05-10 | Split production TypeScript checks into `tsconfig.app.json` | Coolify builds must typecheck the app with JSX enabled while excluding Vitest/Node-only test files from production compilation. |
 
 ---
 
@@ -212,3 +213,19 @@ Artifacts are stored in `engram` (preferred) or `openspec/` (for team sharing).
 
 - Mobile responsiveness is implemented in plain CSS through semantic layout tokens and breakpoint-specific adjustments; no Tailwind or new dependencies.
 - The repository link is static markup in the React UI, with no additional state or effects.
+
+---
+
+## 13. Delta Spec — Production Build Typecheck
+
+### Requirements
+
+- The production `build` script must typecheck only application source before running Vite.
+- The app typecheck must enable React JSX via `jsx: "react-jsx"`.
+- Vitest, Testing Library, Playwright, and Node-only test files must remain in the repository but stay outside production typechecking.
+- Vite must use the React plugin compatible with Vite 8.
+
+### Design Notes
+
+- `tsconfig.app.json` extends the shared TypeScript options and narrows production compilation to app files while excluding `*.test.ts`, `*.test.tsx`, and `src/test-setup.ts`.
+- `vite.config.ts` wires `@vitejs/plugin-react` v6 without adding new dependencies or changing the Vite major version.

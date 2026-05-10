@@ -31,7 +31,6 @@ function App() {
     selectedSquare,
     legalMoves,
     currentTurn,
-    isGameOver,
     history,
     selectSquare,
     undo,

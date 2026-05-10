@@ -36,6 +36,7 @@
 - [x] `src/hooks/` — React hook orchestration with AI/settings/sounds
 - [x] `src/components/` — UI components with AI panel, settings modal, PNG pieces
 - [x] `src/App.tsx` — Root wiring (1 integration test)
+- [x] Production build TypeScript config excludes tests and enables React JSX
 
 ### Testing
 - [x] **228 tests across 17 test files — ALL PASSING**

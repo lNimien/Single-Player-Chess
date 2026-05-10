@@ -1,4 +1,4 @@
-import type { PieceColor, BoardSquare, Move, CastlingRights } from '../logic';
+import type { Algebraic, PieceColor, BoardSquare, Move, CastlingRights } from '../logic';
 import {
   PieceColor as PieceColorConst,
   createInitialBoard,
@@ -18,15 +18,15 @@ export interface GameState {
   sideToMove: PieceColor;
   history: GameMove[];
   castlingRights: CastlingRights;
-  enPassantTarget: string | null;
+  enPassantTarget: Algebraic | null;
   halfmoveClock: number;
   fullmoveNumber: number;
   result: 'checkmate' | 'stalemate' | 'draw' | null;
 }
 
 export interface GameMove {
-  from: string;
-  to: string;
+  from: Algebraic;
+  to: Algebraic;
   piece: string;
   captured: string | null;
   notation: string;
@@ -143,13 +143,13 @@ export function makeMove(game: GameState, move: Move): GameState {
   if (move.castling) {
     const rank = move.piece.color === 'white' ? '1' : '8';
     if (move.castling === 'kingside') {
-      const fromRook = toSquareIndex(`h${rank}` as `${string}${string}`);
-      const toRook = toSquareIndex(`f${rank}` as `${string}${string}`);
+      const fromRook = toSquareIndex(`h${rank}` as Algebraic);
+      const toRook = toSquareIndex(`f${rank}` as Algebraic);
       nextBoard[toRook] = { ...nextBoard[toRook], piece: nextBoard[fromRook].piece };
       nextBoard[fromRook] = { ...nextBoard[fromRook], piece: null };
     } else {
-      const fromRook = toSquareIndex(`a${rank}` as `${string}${string}`);
-      const toRook = toSquareIndex(`d${rank}` as `${string}${string}`);
+      const fromRook = toSquareIndex(`a${rank}` as Algebraic);
+      const toRook = toSquareIndex(`d${rank}` as Algebraic);
       nextBoard[toRook] = { ...nextBoard[toRook], piece: nextBoard[fromRook].piece };
       nextBoard[fromRook] = { ...nextBoard[fromRook], piece: null };
     }
@@ -159,7 +159,7 @@ export function makeMove(game: GameState, move: Move): GameState {
   const nextCastlingRights = updateCastlingRights(game.castlingRights, move);
 
   // Update en passant target
-  let nextEnPassantTarget: string | null = null;
+  let nextEnPassantTarget: Algebraic | null = null;
   if (move.piece.type === 'pawn' && Math.abs(move.to - move.from) === 16) {
     nextEnPassantTarget = fromSquareIndex((move.from + move.to) / 2);
   }
@@ -211,10 +211,10 @@ export function undoMove(game: GameState): GameState {
   return lastMove.beforeState;
 }
 
-function generateEnPassantMoves(board: BoardSquare[], color: PieceColor, enPassantTarget: string | null): Move[] {
+function generateEnPassantMoves(board: BoardSquare[], color: PieceColor, enPassantTarget: Algebraic | null): Move[] {
   if (!enPassantTarget) return [];
 
-  const targetIndex = toSquareIndex(enPassantTarget as `${string}${string}`);
+  const targetIndex = toSquareIndex(enPassantTarget);
   const targetRank = Math.floor(targetIndex / 8);
   const targetFile = targetIndex % 8;
 
@@ -271,11 +271,11 @@ function isCastlingPathSafe(board: BoardSquare[], move: Move, color: PieceColor)
   if (isInCheck(board, color)) return false;
 
   const rank = color === 'white' ? '1' : '8';
-  const path = move.castling === 'kingside'
+  const path: Algebraic[] = move.castling === 'kingside'
     ? [`f${rank}`, `g${rank}`]
     : [`d${rank}`, `c${rank}`];
 
-  return path.every((square) => !isSquareAttacked(board, opponentOf(color), toSquareIndex(square as `${string}${string}`)));
+  return path.every((square) => !isSquareAttacked(board, opponentOf(color), toSquareIndex(square)));
 }
 
 export function getLegalMoves(game: GameState): Move[] {
